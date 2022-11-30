@@ -35,8 +35,6 @@ public:
 		fclose(file);
 		return buffer;
 	}
-
-
 };
 
 #endif

@@ -45,7 +45,7 @@ public:
 		delete [] area;
 	}
 
-	void display(int start_x, int start_y)
+	void display(int start_x, int start_y) const
 	{
 		gotoxy(start_x, start_y);
 		for (int i = 0; i < size + 2; i++)
@@ -56,6 +56,11 @@ public:
 			}
 			gotoxy(start_x, ++start_y);
 		}
+	}
+
+	int get_board_size() const
+	{
+		return this->size;
 	}
 };
 

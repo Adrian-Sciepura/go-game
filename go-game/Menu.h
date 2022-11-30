@@ -56,7 +56,7 @@ public:
 		{
 			if (menu_text[i] == '\n')
 			{
-				gotoxy(start_x, ++start_y);
+				gotoxy(start_x, start_y+=2);
 			}
 			else
 			{
@@ -71,7 +71,6 @@ public:
 		return longest_line;
 	}
 };
-
 
 char* Menu::menu_text = NULL;
 int Menu::longest_line = -1;
