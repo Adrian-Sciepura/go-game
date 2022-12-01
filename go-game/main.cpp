@@ -6,24 +6,50 @@
 #include "FileService.h"
 #include "Menu.h"
 #include "Board.h"
-#define SPACE 10
+#define DISTANCE 10
 
+enum buttons
+{
+	UP_ARROW = 0x48,
+	LEFT_ARROW = 0x4B,
+	DOWN_ARROW = 0x50,
+	RIGHT_ARROW = 0x4D,
+	ENTER = 0x0d,
+	ESC = 0x1B,
+	q = 0x71,
+	n = 0x6E,
+	i = 0x69,
+	s = 0x73,
+	l = 0x6C,
+	f = 0x66
+};
+
+struct Point
+{
+	int x;
+	int y;
+
+	Point(int x, int y)
+	{
+		this->x = x;
+		this->y = y;
+	}
+};
 
 void display(const Board *board, char board_position)
 {
-	clrscr();
 	switch (board_position)
 	{
 		case 'r':
 		{
 			Menu::display(2, 2);
-			board->display(Menu::get_longest_line_length() + SPACE, 2);
-			gotoxy(Menu::get_longest_line_length() + SPACE + 1, 3);
+			board->display(Menu::get_longest_line_length() + DISTANCE, 2);
+			gotoxy(Menu::get_longest_line_length() + DISTANCE + 1, 3);
 			break;
 		}
 		case 'l':
 		{
-			Menu::display(board->get_board_size() + SPACE + 2, 2);
+			Menu::display(board->get_board_size() + DISTANCE + 2, 2);
 			board->display(2, 2);
 			gotoxy(3, 3);
 			break;
@@ -48,48 +74,78 @@ int main()
 #endif
 	Board* board = NULL;
 	char board_position = 'r';
-	int board_size, start_x, start_y, end_x, end_y, curr_x, curr_y;
+	int board_size;
 	board_size = 19;
 
 	settitle("Adrian Sciepura 193350");
-	_setcursortype(_SOLIDCURSOR);
+	_setcursortype(_NOCURSOR);
 	new_game(board, board_size, board_position);
-	start_x = wherex();
-	start_y = wherey();
-	end_x = start_x + board_size - 1;
-	end_y = start_y + board_size - 1;
-	curr_x = start_x;
-	curr_y = start_y;
+
+	Point start(wherex(), wherey());
+	Point end(start.x + board_size - 1, start.y + board_size - 1);
+	Point curr(start.x, start.y);
 
 	int input = 0;
-	while (input != 'q')
+
+	while (input != q)
 	{
-		gotoxy(curr_x, curr_y);
+		display(board, board_position);
+
+		gotoxy(curr.x, curr.y);
+		textcolor(LIGHTBLUE);
+		putch('X');
+		gotoxy(curr.x, curr.y);
+		textcolor(LIGHTGRAY);
 		input = getch();
 
-		if (input == 0) {
-			input = getch();
-			if (input == 0x48) 
+
+		switch (input) {
+			case 0:
 			{
-				if(curr_y != start_y)
-					curr_y--;
+				input = getch();
+
+				switch (input)
+				{
+					case UP_ARROW:
+					{
+						if (curr.y != start.y)
+							curr.y--;
+						break;
+					}
+					case DOWN_ARROW:
+					{
+						if (curr.y != end.y)
+							curr.y++;
+						break;
+					}
+					case LEFT_ARROW:
+					{
+						if (curr.x != start.x)
+							curr.x--;
+						break;
+					}
+					case RIGHT_ARROW:
+					{
+						if (curr.x != end.x)
+							curr.x++;
+						break;
+					}
+				}
+				break;
 			}
-			else if (input == 0x50) 
+			case n:
 			{
-				if (curr_y != end_y)
-					curr_y++;
+				new_game(board, board_size, board_position);
+				break;
 			}
-			else if (input == 0x4b) 
+			case i:
 			{
-				if (curr_x != start_x)
-					curr_x--;
-			}
-			else if (input == 0x4d) 
-			{
-				if (curr_x != end_x)
-					curr_x++;
+				board->set_element_by_pos(curr.x - start.x, curr.y - start.y, 'o');
+				break;
 			}
 		}
 	}
+
+	delete board;
 	return 0;
 }

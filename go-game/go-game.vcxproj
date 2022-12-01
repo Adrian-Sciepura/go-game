@@ -23,6 +23,7 @@
     <ClInclude Include="conio2.h" />
     <ClInclude Include="FileService.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="conio2.cpp" />

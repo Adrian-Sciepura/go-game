@@ -24,7 +24,6 @@ private:
 		int i = 0;
 		int longest = 0;
 		int current = 0;
-		//int counter = 0;
 		while (menu_text[i] != '\0')
 		{
 			if (menu_text[i] == '\n')
@@ -33,7 +32,6 @@ private:
 				{
 					longest = current;
 				}
-				//menu_text[counter] = new char[current+2];
 				current = 0;
 			}
 			else
@@ -77,4 +75,3 @@ int Menu::longest_line = -1;
 int Menu::menu_text_lines = -1;
 
 #endif
-

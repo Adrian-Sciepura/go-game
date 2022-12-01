@@ -62,7 +62,16 @@ public:
 	{
 		return this->size;
 	}
+
+	char get_element_by_pos(int x, int y) const
+	{
+		return area[x+1][y+1];
+	}
+
+	void set_element_by_pos(int x, int y, char c)
+	{
+		area[y + 1][x + 1] = c;
+	}
 };
 
 #endif
-
