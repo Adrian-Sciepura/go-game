@@ -26,17 +26,44 @@ public:
 			{
 				if (j == 0 || j == size + 1)
 				{
-					area[i][j] = border;
+					area[i][j] = '0';
 				}
 				else if (i == 0 || i == size + 1)
 				{
-					area[i][j] = border;
+					area[i][j] = '0';
 				}
 				else
 				{
-					area[i][j] = interior;
+					area[i][j] = '1';
 				}
 			}
+		}
+	}
+
+
+	Board(char* file, int size, char border = '#', char interior = '+')
+	{
+		this->size = size;
+		this->border = border;
+		this->interior = interior;
+		this->area = new char* [size + 2];
+
+		char* temp = FileService::read_file(file);
+		int i = 0;
+		int line = 0;
+
+		while (temp[i] != '\0')
+		{
+			if (area[line] = NULL)
+			{
+				area[line] = new char[size + 2];
+			}
+			if (i % (size+2) == 0)
+			{
+				line++;
+				continue;
+			}
+			area[line][i % (size+2)] = temp[i];
 		}
 	}
 
@@ -52,7 +79,35 @@ public:
 		{
 			for (int j = 0; j < size + 2; j++)
 			{
-				putch(area[i][j]);
+				char temp = area[i][j];
+
+				switch (temp)
+				{
+					case '0':
+					{
+						putch(border);
+						break;
+					}
+					case '1':
+					{
+						putch(interior);
+						break;
+					}
+					case '2':
+					{
+						textcolor(LIGHTGREEN);
+						putch('o');
+						textcolor(LIGHTGRAY);
+						break;
+					}
+					case '3':
+					{
+						textcolor(LIGHTMAGENTA);
+						putch('o');
+						textcolor(LIGHTGRAY);
+						break;
+					}
+				}
 			}
 			gotoxy(start_x, ++start_y);
 		}

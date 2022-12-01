@@ -45,7 +45,7 @@ private:
 
 public:
 
-	static void display(int start_x, int start_y)
+	static void display(int start_x, int start_y, int current_x, int current_y, int tour = 0)
 	{
 		Init();
 		int i = 0;
@@ -62,6 +62,13 @@ public:
 			}
 			i++;
 		}
+		char current_coords_text[30];
+		sprintf(current_coords_text, "x: %d y: %d \n\n", current_x, current_y);
+		cputs(current_coords_text);
+
+		char actual_tour_text[30];
+		sprintf(actual_tour_text, " Tour: Player %d", tour+1);
+		cputs(actual_tour_text);
 	}
 
 	static int get_longest_line_length()

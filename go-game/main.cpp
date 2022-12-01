@@ -36,20 +36,20 @@ struct Point
 	}
 };
 
-void display(const Board *board, char board_position)
+void display(const Board *board, char board_position, Point current_pos, int tour)
 {
 	switch (board_position)
 	{
 		case 'r':
 		{
-			Menu::display(2, 2);
+			Menu::display(2, 2, current_pos.x, current_pos.y, tour);
 			board->display(Menu::get_longest_line_length() + DISTANCE, 2);
 			gotoxy(Menu::get_longest_line_length() + DISTANCE + 1, 3);
 			break;
 		}
 		case 'l':
 		{
-			Menu::display(board->get_board_size() + DISTANCE + 2, 2);
+			Menu::display(board->get_board_size() + DISTANCE + 2, 2, current_pos.x, current_pos.y, tour);
 			board->display(2, 2);
 			gotoxy(3, 3);
 			break;
@@ -57,14 +57,13 @@ void display(const Board *board, char board_position)
 	}
 }
 
-void new_game(Board*& board, int board_size, char board_position)
+void new_game(Board*& board, int board_size)
 {
 	if (board != NULL)
 	{
 		delete board;
 	}
 	board = new Board(board_size);
-	display(board, board_position);
 }
 
 int main()
@@ -76,11 +75,14 @@ int main()
 	char board_position = 'r';
 	int board_size;
 	board_size = 19;
+	bool tour = 0;
+	bool lock = 0;
 
 	settitle("Adrian Sciepura 193350");
 	_setcursortype(_NOCURSOR);
-	new_game(board, board_size, board_position);
-
+	new_game(board, board_size);
+	Point p(0, 0);
+	display(board, board_position, p, tour);
 	Point start(wherex(), wherey());
 	Point end(start.x + board_size - 1, start.y + board_size - 1);
 	Point curr(start.x, start.y);
@@ -89,7 +91,7 @@ int main()
 
 	while (input != q)
 	{
-		display(board, board_position);
+		display(board, board_position, curr, tour);
 
 		gotoxy(curr.x, curr.y);
 		textcolor(LIGHTBLUE);
@@ -98,49 +100,70 @@ int main()
 		textcolor(LIGHTGRAY);
 		input = getch();
 
-
 		switch (input) {
 			case 0:
 			{
-				input = getch();
-
-				switch (input)
+				if (!lock)
 				{
-					case UP_ARROW:
+					input = getch();
+
+					switch (input)
 					{
-						if (curr.y != start.y)
-							curr.y--;
-						break;
-					}
-					case DOWN_ARROW:
-					{
-						if (curr.y != end.y)
-							curr.y++;
-						break;
-					}
-					case LEFT_ARROW:
-					{
-						if (curr.x != start.x)
-							curr.x--;
-						break;
-					}
-					case RIGHT_ARROW:
-					{
-						if (curr.x != end.x)
-							curr.x++;
-						break;
+						case UP_ARROW:
+						{
+							if (curr.y != start.y)
+								curr.y--;
+							break;
+						}
+						case DOWN_ARROW:
+						{
+							if (curr.y != end.y)
+								curr.y++;
+							break;
+						}
+						case LEFT_ARROW:
+						{
+							if (curr.x != start.x)
+								curr.x--;
+							break;
+						}
+						case RIGHT_ARROW:
+						{
+							if (curr.x != end.x)
+								curr.x++;
+							break;
+						}
 					}
 				}
 				break;
 			}
 			case n:
 			{
-				new_game(board, board_size, board_position);
+				new_game(board, board_size);
 				break;
 			}
 			case i:
 			{
-				board->set_element_by_pos(curr.x - start.x, curr.y - start.y, 'o');
+				lock = true;
+				break;
+			}
+			case ENTER:
+			{
+				if (tour)
+				{
+					board->set_element_by_pos(curr.x - start.x, curr.y - start.y, '2');
+				}
+				else
+				{
+					board->set_element_by_pos(curr.x - start.x, curr.y - start.y, '3');
+				}
+				tour = !tour;
+				lock = false;
+				break;
+			}
+			case ESC:
+			{
+				lock = false;
 				break;
 			}
 		}
