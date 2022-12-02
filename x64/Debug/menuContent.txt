@@ -1,9 +1,0 @@
-Adrian Sciepura 193350
-arrows - moving
-q - quit
-n - new game
-enter - confirm and end players turn
-esc - end current action
-i - position of a stone on a board
-l - load game state
-f - end game
