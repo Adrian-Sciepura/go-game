@@ -6,7 +6,7 @@
 class FileService
 {
 public:
-	static char* read_file(const char *file_name)
+	static char* read_file(const char* file_name)
 	{
 		FILE* file;
 		long file_length;
@@ -35,6 +35,37 @@ public:
 		fclose(file);
 		return buffer;
 	}
-};
 
+	static bool save_file(const char* file_name, const char* text_to_save, int text_length)
+	{
+		FILE* file;
+		file = fopen(file_name, "w");
+
+		if (file == NULL)
+		{
+			return false;
+		}
+
+		fwrite(text_to_save, sizeof(char), text_length, file);
+		fclose(file);
+
+		return true;
+	}
+
+	static bool append_file(const char* file_name, const char* text_to_save, int text_length)
+	{
+		FILE* file;
+		file = fopen(file_name, "a");
+
+		if (file == NULL)
+		{
+			return false;
+		}
+
+		fwrite(text_to_save, sizeof(char), text_length, file);
+		fclose(file);
+
+		return true;
+	}
+};
 #endif

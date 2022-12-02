@@ -41,7 +41,7 @@ public:
 	}
 
 
-	Board(char* file, int size, char border = '#', char interior = '+')
+	Board(const char* file, int size, char border = '#', char interior = '+')
 	{
 		this->size = size;
 		this->border = border;
@@ -54,7 +54,7 @@ public:
 
 		while (temp[i] != '\0')
 		{
-			if (area[line] = NULL)
+			if (area[line] == NULL)
 			{
 				area[line] = new char[size + 2];
 			}
@@ -126,6 +126,11 @@ public:
 	void set_element_by_pos(int x, int y, char c)
 	{
 		area[y + 1][x + 1] = c;
+	}
+
+	char* get_area_line(int line) const
+	{
+		return area[line];
 	}
 };
 
