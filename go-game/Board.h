@@ -12,6 +12,14 @@ private:
 	
 public: 
 
+	enum values
+	{
+		BORDER = '0',
+		INTERIOR = '1',
+		PLAYER_1 = '2',
+		PLAYER_2 = '3'
+	};
+
 	Board(int size, char border = '#', char interior = '+')
 	{
 		this->size = size;
@@ -40,7 +48,6 @@ public:
 		}
 	}
 
-
 	Board(const char* file, int size, char border = '#', char interior = '+')
 	{
 		this->size = size;
@@ -48,22 +55,26 @@ public:
 		this->interior = interior;
 		this->area = new char* [size + 2];
 
-		char* temp = FileService::read_file(file);
-		int i = 0;
-		int line = 0;
+		char* load_data = FileService::read_file("gameState.txt");
+		int lenght = 0;
 
-		while (temp[i] != '\0')
+		while (load_data[lenght] != '\n')
 		{
-			if (area[line] == NULL)
+			lenght++;
+		}
+
+		if (lenght == (size + 2))
+		{
+			int k = 0;
+			for (int i = 0; i < lenght; i++)
 			{
-				area[line] = new char[size + 2];
+				area[i] = new char[size + 2];
+				for (int j = 0; j <= lenght; j++)
+				{
+					area[i][j] = load_data[k];
+					k++;
+				}
 			}
-			if (i % (size+2) == 0)
-			{
-				line++;
-				continue;
-			}
-			area[line][i % (size+2)] = temp[i];
 		}
 	}
 
@@ -83,24 +94,24 @@ public:
 
 				switch (temp)
 				{
-					case '0':
+					case BORDER:
 					{
 						putch(border);
 						break;
 					}
-					case '1':
+					case INTERIOR:
 					{
 						putch(interior);
 						break;
 					}
-					case '2':
+					case PLAYER_1:
 					{
 						textcolor(LIGHTGREEN);
 						putch('o');
 						textcolor(LIGHTGRAY);
 						break;
 					}
-					case '3':
+					case PLAYER_2:
 					{
 						textcolor(LIGHTMAGENTA);
 						putch('o');
@@ -132,6 +143,18 @@ public:
 	{
 		return area[line];
 	}
-};
 
+	void save()
+	{
+		int board_size = size;
+		FileService::save_file("gameState.txt", NULL, 0);
+
+		for (int i = 0; i < board_size + 2; i++)
+		{
+			FileService::append_file("gameState.txt", this->get_area_line(i), board_size + 2);
+			FileService::append_file("gameState.txt", "\n", 1);
+		}
+		FileService::append_file("gameState.txt", "\0", 1);
+	}
+};
 #endif

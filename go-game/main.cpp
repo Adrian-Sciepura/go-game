@@ -24,59 +24,11 @@ enum buttons
 	f = 0x66
 };
 
-struct Point
-{
-	int x;
-	int y;
-
-	Point(int x, int y)
-	{
-		this->x = x;
-		this->y = y;
-	}
-};
-
-void save_game(const Board* board)
-{
-	int board_size = board->get_board_size();
-	FileService::save_file("gameState.txt", NULL, 0);
-
-	for (int i = 0; i < board_size + 2; i++)
-	{
-		FileService::append_file("gameState.txt", board->get_area_line(i), board_size + 2);
-		FileService::append_file("gameState.txt", "\n", 1);
-	}
-	FileService::append_file("gameState.txt", "\0", 1);
-}
-
 void load_game(Board*& board)
 {
-	char* load_data = FileService::read_file("gameState.txt");
-	int lenght = 0;
-	while (load_data[lenght] != '\n')
-	{
-		lenght++;
-	}
-
-	if (lenght == (board->get_board_size() + 2))
-	{
-		//delete board;
-		//board = new Board("gameState.txt", 19);
-		int i = 0;
-		int line = 0;
-		while (load_data[i] != '\0')
-		{
-			if (load_data[i] == '\n')
-			{
-				line++;
-				continue;
-			}
-
-			board->set_element_by_pos(0,0, load_data[i]);
-			i++;
-		}
-	}
-
+	int size = board->get_board_size();
+	delete board;
+	board = new Board("gameState.txt", size);
 }
 
 void display(const Board *board, char board_position, Point current_pos, int tour)
@@ -211,7 +163,7 @@ int main()
 			}
 			case s:
 			{
-				save_game(board);
+				board->save();
 				break;
 			}
 			case l:
