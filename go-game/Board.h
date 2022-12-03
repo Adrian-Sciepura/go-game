@@ -1,81 +1,99 @@
-﻿#include"conio2.h"
-
-#ifndef Board_H
-#define Board_H
+#pragma once
+#include "Point.h"
+#include <cstdio>
+#include "conio2.h"
 class Board
 {
 private:
-	int size;
-	char border;
+	__int8 size;
 	char interior;
+	char border;
 	char** area;
-	
-public: 
+
+public:
+	bool tour;
 
 	enum values
 	{
-		BORDER = '0',
-		INTERIOR = '1',
-		PLAYER_1 = '2',
-		PLAYER_2 = '3'
+		INTERIOR = '0',
+		PLAYER_1 = '1',
+		PLAYER_2 = '2'
 	};
 
-	Board(int size, char border = '#', char interior = '+')
+	Board(int size, bool tour = 0, char interior = '+', char border = '#')
 	{
 		this->size = size;
-		this->border = border;
+		this->tour = tour;
 		this->interior = interior;
-		this->area = new char*[size + 2];
+		this->border = border;
+		this->area = new char*[size];
 
-		for (int i = 0; i < size + 2; i++)
+		for (int x = 0; x < size; x++)
 		{
-			area[i] = new char[size + 2];
-			for (int j = 0; j < size + 2; j++)
+			area[x] = new char[size];
+			for (int y = 0; y < size; y++)
 			{
-				if (j == 0 || j == size + 1)
-				{
-					area[i][j] = '0';
-				}
-				else if (i == 0 || i == size + 1)
-				{
-					area[i][j] = '0';
-				}
-				else
-				{
-					area[i][j] = '1';
-				}
+				area[x][y] = INTERIOR;
 			}
 		}
 	}
 
-	Board(const char* file, int size, char border = '#', char interior = '+')
+	bool load(const char* file_name)
 	{
-		this->size = size;
-		this->border = border;
-		this->interior = interior;
-		this->area = new char* [size + 2];
+		FILE* file;
+		file = fopen(file_name, "rb");
 
-		char* load_data = FileService::read_file("gameState.txt");
-		int lenght = 0;
-
-		while (load_data[lenght] != '\n')
+		if (file == NULL)
 		{
-			lenght++;
+			return false;
 		}
 
-		if (lenght == (size + 2))
+		fread(&this->size, sizeof(size), 1, file);
+		fread(&this->tour, sizeof(tour), 1, file);
+		fread(&this->interior, sizeof(interior), 1, file);
+		fread(&this->border, sizeof(border), 1, file);
+
+		delete[] this->area;
+
+		this->area = new char* [size];
+
+		for (int x = 0; x < size; x++)
 		{
-			int k = 0;
-			for (int i = 0; i < lenght; i++)
+			area[x] = new char[size];
+			for (int y = 0; y < size; y++)
 			{
-				area[i] = new char[size + 2];
-				for (int j = 0; j <= lenght; j++)
-				{
-					area[i][j] = load_data[k];
-					k++;
-				}
+				fread(&this->area[x][y], sizeof(char), 1, file);
 			}
 		}
+
+		fclose(file);
+		return true;
+	}
+
+	bool save(const char* file_name)
+	{
+		FILE* file;
+		file = fopen(file_name, "wb");
+
+		if (file == NULL)
+		{
+			return false;
+		}
+
+		fwrite(&this->size, sizeof(size), 1, file);
+		fwrite(&this->tour, sizeof(tour), 1, file);
+		fwrite(&this->interior, sizeof(interior), 1, file);
+		fwrite(&this->border, sizeof(border), 1, file);
+
+		for (int x = 0; x < size; x++)
+		{
+			for (int y = 0; y < size; y++)
+			{
+				fwrite(&this->area[x][y], sizeof(char), 1, file);
+			}
+		}
+		fclose(file);
+		return true;
 	}
 
 	~Board()
@@ -83,22 +101,30 @@ public:
 		delete [] area;
 	}
 
-	void display(int start_x, int start_y) const
+	void display_border(Point p) const
 	{
-		gotoxy(start_x, start_y);
+		gotoxy(p.x, p.y);
 		for (int i = 0; i < size + 2; i++)
 		{
 			for (int j = 0; j < size + 2; j++)
+			{
+				putch(border);
+			}
+			gotoxy(p.x, ++p.y);
+		}
+	}
+
+	void display_area(Point p) const
+	{
+		gotoxy(p.x, p.y);
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = 0; j < size; j++)
 			{
 				char temp = area[i][j];
 
 				switch (temp)
 				{
-					case BORDER:
-					{
-						putch(border);
-						break;
-					}
 					case INTERIOR:
 					{
 						putch(interior);
@@ -120,41 +146,22 @@ public:
 					}
 				}
 			}
-			gotoxy(start_x, ++start_y);
+			gotoxy(p.x, ++p.y);
 		}
 	}
 
 	int get_board_size() const
 	{
-		return this->size;
+		return this->get_board_size();
 	}
 
-	char get_element_by_pos(int x, int y) const
+	char get_value_by_pos(Point p)
 	{
-		return area[x+1][y+1];
+		return this->area[p.y][p.x];
 	}
 
-	void set_element_by_pos(int x, int y, char c)
+	void set_value_by_pos(Point p, char val)
 	{
-		area[y + 1][x + 1] = c;
-	}
-
-	char* get_area_line(int line) const
-	{
-		return area[line];
-	}
-
-	void save()
-	{
-		int board_size = size;
-		FileService::save_file("gameState.txt", NULL, 0);
-
-		for (int i = 0; i < board_size + 2; i++)
-		{
-			FileService::append_file("gameState.txt", this->get_area_line(i), board_size + 2);
-			FileService::append_file("gameState.txt", "\n", 1);
-		}
-		FileService::append_file("gameState.txt", "\0", 1);
+		this->area[p.y][p.x] = val;
 	}
 };
-#endif

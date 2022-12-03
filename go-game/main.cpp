@@ -6,6 +6,7 @@
 #include "FileService.h"
 #include "Menu.h"
 #include "Board.h"
+#include "Point.h"
 #define DISTANCE 10
 
 enum buttons
@@ -24,29 +25,25 @@ enum buttons
 	f = 0x66
 };
 
-void load_game(Board*& board)
-{
-	int size = board->get_board_size();
-	delete board;
-	board = new Board("gameState.txt", size);
-}
-
 void display(const Board *board, char board_position, Point current_pos, int tour)
 {
+	
 	switch (board_position)
 	{
 		case 'r':
 		{
 			Menu::display(2, 2, current_pos.x, current_pos.y, tour);
-			board->display(Menu::get_longest_line_length() + DISTANCE, 2);
-			gotoxy(Menu::get_longest_line_length() + DISTANCE + 1, 3);
+			Point p(Menu::get_longest_line_length() + DISTANCE, 2);
+			board->display_area(p);
+			gotoxy(Menu::get_longest_line_length() + DISTANCE, 2);
 			break;
 		}
 		case 'l':
 		{
 			Menu::display(board->get_board_size() + DISTANCE + 2, 2, current_pos.x, current_pos.y, tour);
-			board->display(2, 2);
-			gotoxy(3, 3);
+			Point p(2, 2);
+			board->display_area(p);
+			gotoxy(2, 2);
 			break;
 		}
 	}
@@ -68,16 +65,15 @@ int main()
 #endif
 	Board* board = NULL;
 	char board_position = 'r';
-	int board_size;
-	board_size = 19;
-	bool tour = 0;
+	int board_size = 19;
 	bool lock = 0;
 
 	settitle("Adrian Sciepura 193350");
 	_setcursortype(_NOCURSOR);
 	new_game(board, board_size);
 	Point p(0, 0);
-	display(board, board_position, p, tour);
+	display(board, board_position, p, board->tour);
+
 	Point start(wherex(), wherey());
 	Point end(start.x + board_size - 1, start.y + board_size - 1);
 	Point curr(start.x, start.y);
@@ -86,7 +82,7 @@ int main()
 
 	while (input != q)
 	{
-		display(board, board_position, curr, tour);
+		display(board, board_position, curr, board->tour);
 
 		gotoxy(curr.x, curr.y);
 		textcolor(LIGHTBLUE);
@@ -144,15 +140,17 @@ int main()
 			}
 			case ENTER:
 			{
-				if (tour)
+				if (!board->tour)
 				{
-					board->set_element_by_pos(curr.x - start.x, curr.y - start.y, '2');
+					Point p(curr.x - start.x, curr.y - start.y);
+					board->set_value_by_pos(p, Board::values::PLAYER_1);
 				}
 				else
 				{
-					board->set_element_by_pos(curr.x - start.x, curr.y - start.y, '3');
+					Point p(curr.x - start.x, curr.y - start.y);
+					board->set_value_by_pos(p, Board::values::PLAYER_2);
 				}
-				tour = !tour;
+				board->tour = !board->tour;
 				lock = false;
 				break;
 			}
@@ -163,12 +161,13 @@ int main()
 			}
 			case s:
 			{
-				board->save();
+				board->save("gameState.bin");
 				break;
 			}
 			case l:
 			{
-				load_game(board);
+				clrscr();
+				board->load("gameState.bin");
 				break;
 			}
 		}

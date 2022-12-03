@@ -15,9 +15,9 @@ public:
 
 	bool set_stone(Board *b, Point p)
 	{
-		char value_of_position = b->get_element_by_pos(p.x, p.y);
+		char value_of_position = b->get_value_by_pos(p);
 
-		if (value_of_position != Board::values::INTERIOR)
+		if (value_of_position == Board::values::INTERIOR)
 		{
 
 		}

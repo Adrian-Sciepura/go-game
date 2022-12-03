@@ -2,8 +2,8 @@ Adrian Sciepura 193350
 arrows - moving
 q - quit
 n - new game
-enter - confirm and end players turn
-esc - end current action
+enter - confirm current action
+esc - cancel current action
 i - place stone on a board
 s - save game
 l - load game
