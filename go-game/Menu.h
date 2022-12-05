@@ -1,6 +1,7 @@
 #include <cstdio>
 #include"conio2.h"
 #include "FileService.h"
+#include "Point.h"
 #ifndef Menu_H
 #define Menu_H
 
@@ -44,16 +45,16 @@ private:
 
 public:
 
-	static void display(int start_x, int start_y, int current_x, int current_y, int tour = 0)
+	static void display(Point start_pos, Point current_pos, int tour)
 	{
 		Init();
 		int i = 0;
-		gotoxy(start_x, start_y);
+		gotoxy(start_pos.x, start_pos.y);
 		while (menu_text[i] != '\0')
 		{
 			if (menu_text[i] == '\n')
 			{
-				gotoxy(start_x, start_y+=2);
+				gotoxy(start_pos.x, start_pos.y+=2);
 			}
 			else
 			{
@@ -62,16 +63,17 @@ public:
 			i++;
 		}
 		char current_coords_text[30];
-		sprintf(current_coords_text, "x: %d y: %d \n\n", current_x, current_y);
+		sprintf(current_coords_text, "x: %d y: %d \n\n", current_pos.x, current_pos.y);
 		cputs(current_coords_text);
-
+		gotoxy(start_pos.x, start_pos.y+=2);
 		char actual_tour_text[30];
-		sprintf(actual_tour_text, " Tour: Player %d", tour+1);
+		sprintf(actual_tour_text, "Tour: Player %d", tour+1);
 		cputs(actual_tour_text);
 	}
 
 	static int get_longest_line_length()
 	{
+		Init();
 		return longest_line;
 	}
 };

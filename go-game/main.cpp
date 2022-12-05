@@ -7,46 +7,41 @@
 #include "Menu.h"
 #include "Board.h"
 #include "Point.h"
+#include "Selection_Menu.h"
+#include "Cursor.h"
+#include "Player.h"
 #define DISTANCE 10
 
-enum buttons
+void display(Board* board, Cursor& cursor, char board_location)
 {
-	UP_ARROW = 0x48,
-	LEFT_ARROW = 0x4B,
-	DOWN_ARROW = 0x50,
-	RIGHT_ARROW = 0x4D,
-	ENTER = 0x0d,
-	ESC = 0x1B,
-	q = 0x71,
-	n = 0x6E,
-	i = 0x69,
-	s = 0x73,
-	l = 0x6C,
-	f = 0x66
-};
-
-void display(const Board *board, char board_position, Point current_pos, int tour)
-{
-	
-	switch (board_position)
+	Point menu_display_pos;
+	Point board_display_pos;
+	switch (board_location)
 	{
 		case 'r':
 		{
-			Menu::display(2, 2, current_pos.x, current_pos.y, tour);
-			Point p(Menu::get_longest_line_length() + DISTANCE, 2);
-			board->display_area(p);
-			gotoxy(Menu::get_longest_line_length() + DISTANCE, 2);
+			menu_display_pos.x = 2;
+			menu_display_pos.y = 2;
+
+			cursor.limit_1.x = Menu::get_longest_line_length() + DISTANCE+1;
+			cursor.limit_1.y = 3;
+
 			break;
 		}
 		case 'l':
 		{
-			Menu::display(board->get_board_size() + DISTANCE + 2, 2, current_pos.x, current_pos.y, tour);
-			Point p(2, 2);
-			board->display_area(p);
-			gotoxy(2, 2);
+			menu_display_pos.x = board->get_board_size() + DISTANCE + 2;
+			menu_display_pos.y = 2;
+
+			cursor.limit_1.x = 2;
+			cursor.limit_1.y = 2;
 			break;
 		}
 	}
+
+	cursor.limit_2 = {cursor.limit_1.x + board->get_board_size()-1, cursor.limit_1.y + board->get_board_size()-1 };
+	Menu::display(menu_display_pos, cursor.current_pos, board->tour);
+	board->display_area(cursor.limit_1);
 }
 
 void new_game(Board*& board, int board_size)
@@ -58,121 +53,118 @@ void new_game(Board*& board, int board_size)
 	board = new Board(board_size);
 }
 
-int main()
+int select_size()
+{
+	int input;
+	int result = -1;
+	Cursor cursor;
+
+	Selection_Menu_Element* elements = (Selection_Menu_Element*)malloc(4 * sizeof(Selection_Menu_Element));
+	elements[0] = {"9x9", 9};
+	elements[1] = {"13x13", 13};
+	elements[2] = {"19x19", 19};
+	elements[3] = {"Other", 0};
+
+	Selection_Menu board_size_selector { elements, 4, "Choose board size", 0, 3};
+	board_size_selector.display(cursor);
+
+	while (result == -1)
+	{
+		input = getch();
+		result = board_size_selector.move(cursor, input);
+	}
+
+	return result;
+}
+
+void init(Board*& board, int& board_size)
 {
 #ifndef __cplusplus
 	Conio2_Init();
 #endif
-	Board* board = NULL;
-	char board_position = 'r';
-	int board_size = 19;
-	bool lock = 0;
-
 	settitle("Adrian Sciepura 193350");
 	_setcursortype(_NOCURSOR);
+	board_size = select_size();
 	new_game(board, board_size);
-	Point p(0, 0);
-	display(board, board_position, p, board->tour);
+	clrscr();
+}
 
-	Point start(wherex(), wherey());
-	Point end(start.x + board_size - 1, start.y + board_size - 1);
-	Point curr(start.x, start.y);
-
+int main()
+{
+	Board* board = NULL;
+	Cursor cursor;
+	Player p1(Board::PLAYER_1);
+	Player p2(Board::PLAYER_2);
+	char board_location = 'r';
+	int board_size = 19;
 	int input = 0;
+	bool lock = false;
 
-	while (input != q)
+	init(board, board_size);
+	
+	display(board, cursor, board_location);
+	Helper::display_border(cursor.limit_1 - 1, cursor.limit_1 + board->get_board_size() + 1);
+	cursor.current_pos = cursor.limit_1;
+
+	while (input != Helper::q)
 	{
-		display(board, board_position, curr, board->tour);
-
-		gotoxy(curr.x, curr.y);
-		textcolor(LIGHTBLUE);
-		putch('X');
-		gotoxy(curr.x, curr.y);
-		textcolor(LIGHTGRAY);
+		display(board, cursor, board_location);
+		cursor.display();
 		input = getch();
 
-		switch (input) {
+		switch (input)
+		{
 			case 0:
 			{
-				if (!lock)
+				if (lock == false)
 				{
 					input = getch();
-
-					switch (input)
-					{
-						case UP_ARROW:
-						{
-							if (curr.y != start.y)
-								curr.y--;
-							break;
-						}
-						case DOWN_ARROW:
-						{
-							if (curr.y != end.y)
-								curr.y++;
-							break;
-						}
-						case LEFT_ARROW:
-						{
-							if (curr.x != start.x)
-								curr.x--;
-							break;
-						}
-						case RIGHT_ARROW:
-						{
-							if (curr.x != end.x)
-								curr.x++;
-							break;
-						}
-					}
+					cursor.move(input);
 				}
 				break;
 			}
-			case n:
-			{
-				new_game(board, board_size);
-				break;
-			}
-			case i:
+			case Helper::i:
 			{
 				lock = true;
 				break;
 			}
-			case ENTER:
+			case Helper::ENTER:
 			{
-				if (!board->tour)
-				{
-					Point p(curr.x - start.x, curr.y - start.y);
-					board->set_value_by_pos(p, Board::values::PLAYER_1);
-				}
+				Point temp(cursor.current_pos - cursor.limit_1);
+				bool success;
+				if (board->tour)
+					success = p2.set_stone(board, temp);
 				else
+					success = p1.set_stone(board, temp);
+
+				if (success)
 				{
-					Point p(curr.x - start.x, curr.y - start.y);
-					board->set_value_by_pos(p, Board::values::PLAYER_2);
+					board->tour = !board->tour;
+					lock = false;
 				}
-				board->tour = !board->tour;
-				lock = false;
 				break;
 			}
-			case ESC:
+			case Helper::ESC:
 			{
 				lock = false;
 				break;
 			}
-			case s:
+			case Helper::s:
 			{
 				board->save("gameState.bin");
 				break;
 			}
-			case l:
+			case Helper::l:
 			{
-				clrscr();
 				board->load("gameState.bin");
+				break;
+			}
+			case Helper::n:
+			{
+				new_game(board, board_size);
 				break;
 			}
 		}
 	}
-
-	delete board;
-	return 0;
+	getch();
 }

@@ -4,24 +4,25 @@
 class Player
 {
 private:
-	int id;
-	int score;
+	char id;
 public:
-	Player(int id)
+	int score;
+
+	Player(char id)
 	{
 		this->id = id;
 		this->score = 0;
 	}
 
-	bool set_stone(Board *b, Point p)
+	bool set_stone(Board* board, Point p)
 	{
-		char value_of_position = b->get_value_by_pos(p);
+		char value_of_position = board->get_value_by_pos(p);
 
-		if (value_of_position == Board::values::INTERIOR)
+		if (value_of_position == Board::INTERIOR)
 		{
-
+			board->set_value_by_pos(p, this->id);
+			return true;
 		}
-
 
 		return false;
 	}

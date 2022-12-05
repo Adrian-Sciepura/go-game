@@ -17,7 +17,8 @@ public:
 	{
 		INTERIOR = '0',
 		PLAYER_1 = '1',
-		PLAYER_2 = '2'
+		PLAYER_2 = '2',
+		OUT_OF_RANGE = '#'
 	};
 
 	Board(int size, bool tour = 0, char interior = '+', char border = '#')
@@ -101,18 +102,6 @@ public:
 		delete [] area;
 	}
 
-	void display_border(Point p) const
-	{
-		gotoxy(p.x, p.y);
-		for (int i = 0; i < size + 2; i++)
-		{
-			for (int j = 0; j < size + 2; j++)
-			{
-				putch(border);
-			}
-			gotoxy(p.x, ++p.y);
-		}
-	}
 
 	void display_area(Point p) const
 	{
@@ -152,11 +141,16 @@ public:
 
 	int get_board_size() const
 	{
-		return this->get_board_size();
+		return this->size;
 	}
 
 	char get_value_by_pos(Point p)
 	{
+		if (p.x >= size || p.y >= size)
+			return OUT_OF_RANGE;
+		if (p.x < 0 || p.y < 0)
+			return OUT_OF_RANGE;
+
 		return this->area[p.y][p.x];
 	}
 
