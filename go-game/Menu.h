@@ -45,7 +45,7 @@ private:
 
 public:
 
-	static void display(Point start_pos, Point current_pos, int tour)
+	static void display(Point start_pos, Point absolute_pos, int tour)
 	{
 		Init();
 		int i = 0;
@@ -63,7 +63,7 @@ public:
 			i++;
 		}
 		char current_coords_text[30];
-		sprintf(current_coords_text, "x: %d y: %d \n\n", current_pos.x, current_pos.y);
+		sprintf(current_coords_text, "x: %d y: %d \n\n", absolute_pos.x, absolute_pos.y);
 		cputs(current_coords_text);
 		gotoxy(start_pos.x, start_pos.y+=2);
 		char actual_tour_text[30];

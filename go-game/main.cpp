@@ -12,6 +12,7 @@
 #include "Player.h"
 #define DISTANCE 10
 
+
 void display(Board* board, Cursor& cursor, char board_location)
 {
 	Point menu_display_pos;
@@ -39,8 +40,8 @@ void display(Board* board, Cursor& cursor, char board_location)
 		}
 	}
 
-	cursor.limit_2 = {cursor.limit_1.x + board->get_board_size()-1, cursor.limit_1.y + board->get_board_size()-1 };
-	Menu::display(menu_display_pos, cursor.current_pos, board->tour);
+	cursor.limit_2 = {cursor.limit_1.x + board->get_board_size()*2-2, cursor.limit_1.y + board->get_board_size()-1 };
+	Menu::display(menu_display_pos, cursor.relative_pos, board->tour);
 	board->display_area(cursor.limit_1);
 }
 
@@ -66,7 +67,7 @@ int select_size()
 	elements[3] = {"Other", 0};
 
 	Selection_Menu board_size_selector { elements, 4, "Choose board size", 0, 3};
-	board_size_selector.display(cursor);
+	board_size_selector.display(cursor, YELLOW);
 
 	while (result == -1)
 	{
@@ -103,11 +104,12 @@ int main()
 	init(board, board_size);
 	
 	display(board, cursor, board_location);
-	Helper::display_border(cursor.limit_1 - 1, cursor.limit_1 + board->get_board_size() + 1);
-	cursor.current_pos = cursor.limit_1;
+	Helper::display_border(cursor.limit_1 - 1, {cursor.limit_2.x + 2, cursor.limit_2.y + 2}, YELLOW);
+	cursor.absolute_pos = cursor.limit_1;
 
 	while (input != Helper::q)
 	{
+		textcolor(WHITE);
 		display(board, cursor, board_location);
 		cursor.display();
 		input = getch();
@@ -130,12 +132,11 @@ int main()
 			}
 			case Helper::ENTER:
 			{
-				Point temp(cursor.current_pos - cursor.limit_1);
 				bool success;
 				if (board->tour)
-					success = p2.set_stone(board, temp);
+					success = p2.set_stone(board, cursor.relative_pos);
 				else
-					success = p1.set_stone(board, temp);
+					success = p1.set_stone(board, cursor.relative_pos);
 
 				if (success)
 				{

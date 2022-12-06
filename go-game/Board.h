@@ -6,8 +6,8 @@ class Board
 {
 private:
 	__int8 size;
-	char interior;
-	char border;
+	unsigned char interior;
+	unsigned char border;
 	char** area;
 
 public:
@@ -21,7 +21,7 @@ public:
 		OUT_OF_RANGE = '#'
 	};
 
-	Board(int size, bool tour = 0, char interior = '+', char border = '#')
+	Board(int size, bool tour = 0, unsigned char interior = '+', unsigned char border = '#')
 	{
 		this->size = size;
 		this->tour = tour;
@@ -102,7 +102,6 @@ public:
 		delete [] area;
 	}
 
-
 	void display_area(Point p) const
 	{
 		gotoxy(p.x, p.y);
@@ -116,24 +115,27 @@ public:
 				{
 					case INTERIOR:
 					{
-						putch(interior);
+						putch(197);
 						break;
 					}
 					case PLAYER_1:
 					{
-						textcolor(LIGHTGREEN);
-						putch('o');
-						textcolor(LIGHTGRAY);
+						textcolor(WHITE);
+						putch(254);
+						textcolor(WHITE);
 						break;
 					}
 					case PLAYER_2:
 					{
-						textcolor(LIGHTMAGENTA);
-						putch('o');
-						textcolor(LIGHTGRAY);
+						textcolor(DARKGRAY);
+						putch(254);
+						textcolor(WHITE);
 						break;
 					}
 				}
+
+				if (j != size - 1)
+					putch(196);
 			}
 			gotoxy(p.x, ++p.y);
 		}

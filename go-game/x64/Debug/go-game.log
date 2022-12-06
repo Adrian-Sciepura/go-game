@@ -1,5 +1,5 @@
 ﻿  main.cpp
 C:\GitHub\go-game\go-game\Selection_Menu.h(17,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Selection_Menu.h(82,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Selection_Menu.h(97,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Selection_Menu.h(81,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Selection_Menu.h(96,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
   go-game.vcxproj -> C:\GitHub\go-game\x64\Debug\go-game.exe

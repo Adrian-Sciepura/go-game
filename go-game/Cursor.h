@@ -5,16 +5,18 @@ struct Cursor
 {
 	Point limit_1;
 	Point limit_2;
-	Point current_pos;
+	Point absolute_pos;
+	Point relative_pos;
 	char symbol = 'X';
-	int jump = 1;
+	int jumpX = 2;
+	int jumpY = 1;
 
 	void display()
 	{
-		gotoxy(current_pos.x, current_pos.y);
-		textcolor(LIGHTBLUE);
+		gotoxy(absolute_pos.x, absolute_pos.y);
+		textcolor(YELLOW);
 		putch(symbol);
-		gotoxy(current_pos.x, current_pos.y);
+		gotoxy(absolute_pos.x, absolute_pos.y);
 		textcolor(LIGHTGRAY);
 	}
 
@@ -24,28 +26,30 @@ struct Cursor
 		{
 			case Helper::UP_ARROW:
 			{
-				if (current_pos.y != limit_1.y)
-					current_pos.y--;
+				if (absolute_pos.y != limit_1.y)
+					absolute_pos.y -= jumpY;
 				break;
 			}
 			case Helper::DOWN_ARROW:
 			{
-				if (current_pos.y != limit_2.y)
-					current_pos.y++;
+				if (absolute_pos.y != limit_2.y)
+					absolute_pos.y += jumpY;
 				break;
 			}
 			case Helper::LEFT_ARROW:
 			{
-				if (current_pos.x != limit_1.x)
-					current_pos.x--;
+				if (absolute_pos.x != limit_1.x)
+					absolute_pos.x -= jumpX;
 				break;
 			}
 			case Helper::RIGHT_ARROW:
 			{
-				if (current_pos.x != limit_2.x)
-					current_pos.x++;
+				if (absolute_pos.x != limit_2.x)
+					absolute_pos.x += jumpX;
 				break;
 			}
 		}
+
+		relative_pos = { (absolute_pos.x - limit_1.x) /2, absolute_pos.y - limit_1.y};
 	}
 };

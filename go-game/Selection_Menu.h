@@ -28,7 +28,6 @@ private:
 	char* header;
 	int spacing;
 	int position;
-	int first_element_x;
 
 public:
 	Selection_Menu(Selection_Menu_Element* elements, int number_of_elements, const char* header, int position, int spacing)
@@ -39,7 +38,6 @@ public:
 		this->position = position;
 		this->spacing = spacing;
 		this->start_pos = { 0, 0 };
-		this->first_element_x = -1;
 	}
 
 	~Selection_Menu()
@@ -49,7 +47,8 @@ public:
 
 	void update_cursor(Cursor& cursor)
 	{
-		int temp = first_element_x;
+		textcolor(WHITE);
+		int temp = cursor.limit_1.x - 1;
 
 		for (int i = 0; i < number_of_elements; i++)
 		{
@@ -57,8 +56,8 @@ public:
 			putch(' ');
 			if (i == position)
 			{
-				cursor.current_pos.x = temp + i * spacing - 1;
-				cursor.current_pos.y = start_pos.y + 5;
+				cursor.absolute_pos.x = temp + i * spacing - 1;
+				cursor.absolute_pos.y = start_pos.y + 5;
 			}
 			temp += (elements[i].length);
 			cputs(elements[i].content);
@@ -67,7 +66,7 @@ public:
 		cursor.display();
 	}
 
-	void display(Cursor& cursor)
+	void display(Cursor& cursor, int border_color, int header_color = WHITE)
 	{
 		int full_elements_length = (number_of_elements - 1)*spacing;
 		for (int i = 0; i < number_of_elements; i++)
@@ -91,17 +90,23 @@ public:
 		start_pos.x = (ti->screenwidth - final_length)/2;
 		start_pos.y = (ti->screenheight - 8)/2;
 		Point end_pos(start_pos.x + final_length, start_pos.y + 8);
-		Helper::display_border(start_pos, end_pos);
+		Helper::display_border(start_pos, end_pos, border_color);
 		
 
 		gotoxy(start_pos.x + (final_length - strlen(header)) / 2, start_pos.y + 2);
+		textcolor(header_color);
 		cputs(header);
+		textcolor(WHITE);
 
-		first_element_x = start_pos.x + (final_length - full_elements_length) / 2;
-		
+		cursor.limit_1.x = start_pos.x + (final_length - full_elements_length) / 2 + 1;
+		cursor.limit_1.y = start_pos.y + 5;
+		cursor.limit_2.x = start_pos.x + full_elements_length + 1;
+
 		update_cursor(cursor);
 		delete ti;
 	}
+
+
 
 	int move(Cursor& cursor, int input)
 	{ 
