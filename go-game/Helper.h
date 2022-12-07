@@ -11,6 +11,7 @@ public:
 	RIGHT_ARROW = 0x4D,
 	ENTER = 0x0d,
 	ESC = 0x1B,
+	BACKSPACE = 0x8,
 	q = 0x71,
 	n = 0x6E,
 	i = 0x69,
@@ -61,9 +62,12 @@ public:
 			gotoxy(corners[i].x, corners[i].y);
 			putch(symbols[i]);
 		}
+	}
 
-
-
+	static int convert_string_to_int(const char* str)
+	{
+		char* end;
+		return strtol(str, &end, 10);
 	}
 };
 

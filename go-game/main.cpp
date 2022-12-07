@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include "conio2.h"
 #include "FileService.h"
-#include "Menu.h"
+#include "Legend.h"
 #include "Board.h"
 #include "Point.h"
-#include "Selection_Menu.h"
+#include "Menu.h"
 #include "Cursor.h"
 #include "Player.h"
+
 #define DISTANCE 10
 
 
@@ -24,7 +25,7 @@ void display(Board* board, Cursor& cursor, char board_location)
 			menu_display_pos.x = 2;
 			menu_display_pos.y = 2;
 
-			cursor.limit_1.x = Menu::get_longest_line_length() + DISTANCE+1;
+			cursor.limit_1.x = Legend::get_longest_line_length() + DISTANCE+1;
 			cursor.limit_1.y = 3;
 
 			break;
@@ -41,7 +42,7 @@ void display(Board* board, Cursor& cursor, char board_location)
 	}
 
 	cursor.limit_2 = {cursor.limit_1.x + board->get_board_size()*2-2, cursor.limit_1.y + board->get_board_size()-1 };
-	Menu::display(menu_display_pos, cursor.relative_pos, board->tour);
+	Legend::display(menu_display_pos, cursor.relative_pos, board->tour);
 	board->display_area(cursor.limit_1);
 }
 
@@ -57,25 +58,34 @@ void new_game(Board*& board, int board_size)
 int select_size()
 {
 	int input;
-	int result = -1;
+	char* result = NULL;
+
 	Cursor cursor;
 
 	Selection_Menu_Element* elements = (Selection_Menu_Element*)malloc(4 * sizeof(Selection_Menu_Element));
-	elements[0] = {"9x9", 9};
-	elements[1] = {"13x13", 13};
-	elements[2] = {"19x19", 19};
-	elements[3] = {"Other", 0};
+	elements[0] = { SELECTION, "9x9", "9" };
+	elements[1] = { SELECTION, "13x13", "13" };
+	elements[2] = { SELECTION, "19x19", "19" };
+	elements[3] = {	INPUT, "Other"};
 
-	Selection_Menu board_size_selector { elements, 4, "Choose board size", 0, 3};
-	board_size_selector.display(cursor, YELLOW);
+	Selection_Menu board_size_selector
+	{
+		elements, 4, 3,
+		cursor,
+		"Choose board size",
+		YELLOW
+	};
 
-	while (result == -1)
+	board_size_selector.display(5);
+
+	while (result == NULL)
 	{
 		input = getch();
-		result = board_size_selector.move(cursor, input);
+		result = board_size_selector.handle_input(input);
 	}
 
-	return result;
+	free(elements);
+	return Helper::convert_string_to_int(result);
 }
 
 void init(Board*& board, int& board_size)

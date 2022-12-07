@@ -21,13 +21,13 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="conio2.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="FileService.h" />
-    <ClInclude Include="Menu.h" />
+    <ClInclude Include="Legend.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Point.h" />
-    <ClInclude Include="Selection_Menu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="conio2.cpp" />

@@ -1,85 +1,226 @@
-#include <cstdio>
-#include"conio2.h"
-#include "FileService.h"
+#pragma once
+#include <string.h>
 #include "Point.h"
-#ifndef Menu_H
-#define Menu_H
+#include "Helper.h"
+#include "Cursor.h"
 
 class Menu
 {
-private:
-	static char* menu_text;
-	static int menu_text_lines;
-	static int longest_line;
+protected:
+	Cursor cursor;
+	Point start_pos;
+	char* header;
+	int number_of_rows;
+	int border_color;
 
-	static void Init()
+	Menu(Cursor& cursor, const char* header, int number_of_rows, int border_color = YELLOW)
 	{
-		if (menu_text != NULL)
-		{
-			return;
-		}
-
-		menu_text = FileService::read_file("menuContent.txt");
-		
-		int i = 0;
-		int longest = 0;
-		int current = 0;
-		while (menu_text[i] != '\0')
-		{
-			if (menu_text[i] == '\n')
-			{
-				if (longest < current)
-				{
-					longest = current;
-				}
-				current = 0;
-			}
-			else
-			{
-				current++;
-			}
-			i++;
-		}
-		longest_line = longest;
+		this->cursor = cursor;
+		this->start_pos = {0,0};
+		this->header = _strdup(header);
+		this->number_of_rows = number_of_rows;
+		this->border_color = border_color;
 	}
 
-public:
-
-	static void display(Point start_pos, Point absolute_pos, int tour)
+	void display(int length)
 	{
-		Init();
-		int i = 0;
-		gotoxy(start_pos.x, start_pos.y);
-		while (menu_text[i] != '\0')
-		{
-			if (menu_text[i] == '\n')
-			{
-				gotoxy(start_pos.x, start_pos.y+=2);
-			}
-			else
-			{
-				putch(menu_text[i]);
-			}
-			i++;
-		}
-		char current_coords_text[30];
-		sprintf(current_coords_text, "x: %d y: %d \n\n", absolute_pos.x, absolute_pos.y);
-		cputs(current_coords_text);
-		gotoxy(start_pos.x, start_pos.y+=2);
-		char actual_tour_text[30];
-		sprintf(actual_tour_text, "Tour: Player %d", tour+1);
-		cputs(actual_tour_text);
-	}
+		text_info* ti = new text_info;
+		gettextinfo(ti);
+		start_pos.x = (ti->screenwidth - length) / 2;
+		start_pos.y = (ti->screenheight - number_of_rows) / 2;
+		Point end_pos(start_pos.x + length, start_pos.y + number_of_rows + 2);
+		Helper::display_border(start_pos, end_pos, border_color);
 
-	static int get_longest_line_length()
-	{
-		Init();
-		return longest_line;
+		gotoxy(start_pos.x + (length - strlen(header)) / 2, start_pos.y + 2);
+		textcolor(CYAN);
+		cputs(header);
+		textcolor(WHITE);
 	}
 };
 
-char* Menu::menu_text = NULL;
-int Menu::longest_line = -1;
-int Menu::menu_text_lines = -1;
+class Input_Menu : Menu
+{
+private:
+	char* buffer;
+	int index;
+public:
+	Input_Menu(Cursor& cursor, const char* header, int border_color)
+		: Menu(cursor, header, 5, border_color)
+	{
+		this->buffer = new char[11];
+		this->index = 0;
+	}
 
-#endif
+	void display()
+	{
+		clrscr();
+		Menu::display(25);
+	}
+
+	char* handle_input(int input)
+	{
+		if (input == Helper::ENTER)
+		{
+			return buffer;
+		}
+		else if (input == Helper::BACKSPACE)
+		{
+			if (index > 0)
+			{
+				buffer[index] = '\0';
+				index--;
+				gotoxy(start_pos.x + 7 + index, start_pos.y + 4);
+				putch(' ');
+			}
+		}
+		else
+		{
+			if (index < 11)
+			{
+				buffer[index] = input;
+				gotoxy(start_pos.x + 7 + index, start_pos.y + 4);
+				putch(input);
+				index++;
+				buffer[index] = '\0';
+			}
+		}
+		return NULL;
+	}
+};
+
+enum element_type { SELECTION, INPUT };
+
+struct Selection_Menu_Element
+{
+	char* content;
+	int length;
+	char* return_value;
+	element_type type;
+
+	Selection_Menu_Element(element_type type, const char* content, const char* return_value = NULL)
+	{
+		this->content = _strdup(content);
+		this->length = strlen(content);
+		this->return_value = _strdup(return_value);
+		this->type = type;
+	}
+};
+
+class Selection_Menu : Menu
+{
+private:
+	Selection_Menu_Element* elements;
+	int number_of_elements;
+	int spacing;
+	int position;
+
+public:
+	Selection_Menu(Selection_Menu_Element* elements, int number_of_elements, int spacing, Cursor& cursor, const char* header, int border_color)
+		: Menu(cursor, header, 6, border_color)
+	{
+		this->elements = elements;
+		this->number_of_elements = number_of_elements;
+		this->spacing = spacing;
+		this->position = 0;
+	}
+
+	void update_cursor()
+	{
+		textcolor(WHITE);
+		int temp = cursor.limit_1.x - 1;
+
+		for (int i = 0; i < number_of_elements; i++)
+		{
+			gotoxy(temp + i * spacing - 1, cursor.limit_1.y);
+			putch(' ');
+			if (i == position)
+			{
+				cursor.absolute_pos.x = temp + i * spacing - 1;
+				cursor.absolute_pos.y = start_pos.y + 5;
+			}
+			temp += (elements[i].length);
+			cputs(elements[i].content);
+		}
+
+		cursor.display();
+	}
+
+	void display(int line = 5)
+	{
+		int final_length;
+		int full_elements_length = (number_of_elements - 1) * spacing;
+		for (int i = 0; i < number_of_elements; i++)
+		{
+			full_elements_length += elements[i].length;
+		}
+
+		if (strlen(header) > full_elements_length)
+		{
+			final_length = strlen(header) + 2 * spacing;
+		}
+		else
+		{
+			final_length = full_elements_length + 2 * spacing;
+		}
+
+		Menu::display(final_length);
+
+		cursor.limit_1.x = start_pos.x + (final_length - full_elements_length) / 2 + 1;
+		cursor.limit_1.y = start_pos.y + line;
+		cursor.limit_2.x = start_pos.x + full_elements_length + 1;
+
+		update_cursor();
+	}
+
+	char* handle_input(int input)
+	{
+		switch (input)
+		{
+			case 0:
+			{
+				input = getch();
+				switch (input)
+				{
+					case Helper::LEFT_ARROW:
+					{
+						if (position > 0)
+							position--;
+						break;
+					}
+					case Helper::RIGHT_ARROW:
+					{
+						if (position < number_of_elements - 1)
+							position++;
+						break;
+					}
+				}
+				update_cursor();
+				break;
+			}
+			case Helper::ENTER:
+			{
+				if (elements[position].type == SELECTION)
+				{
+					return elements[position].return_value;
+				}
+				else
+				{
+					Input_Menu input_menu(cursor, header, YELLOW);
+
+					input_menu.display();
+
+					char* text = NULL;
+					while (text == NULL)
+					{
+						input = getch();
+						text = input_menu.handle_input(input);
+					}
+
+					return text;
+				}
+				break;
+			}
+		}
+		return NULL;
+	}
+};
