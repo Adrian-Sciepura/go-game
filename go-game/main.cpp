@@ -117,7 +117,7 @@ int main()
 	Helper::display_border(cursor.limit_1 - 1, {cursor.limit_2.x + 2, cursor.limit_2.y + 2}, YELLOW);
 	cursor.absolute_pos = cursor.limit_1;
 
-	while (input != Helper::q)
+	while (input != buttons::q)
 	{
 		textcolor(WHITE);
 		display(board, cursor, board_location);
@@ -135,12 +135,12 @@ int main()
 				}
 				break;
 			}
-			case Helper::i:
+			case buttons::i:
 			{
 				lock = true;
 				break;
 			}
-			case Helper::ENTER:
+			case buttons::ENTER:
 			{
 				bool success;
 				if (board->tour)
@@ -155,22 +155,22 @@ int main()
 				}
 				break;
 			}
-			case Helper::ESC:
+			case buttons::ESC:
 			{
 				lock = false;
 				break;
 			}
-			case Helper::s:
+			case buttons::s:
 			{
 				board->save("gameState.bin");
 				break;
 			}
-			case Helper::l:
+			case buttons::l:
 			{
 				board->load("gameState.bin");
 				break;
 			}
-			case Helper::n:
+			case buttons::n:
 			{
 				new_game(board, board_size);
 				break;

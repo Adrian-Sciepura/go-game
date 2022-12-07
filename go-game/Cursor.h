@@ -24,25 +24,25 @@ struct Cursor
 	{
 		switch (input)
 		{
-			case Helper::UP_ARROW:
+			case buttons::UP_ARROW:
 			{
 				if (absolute_pos.y != limit_1.y)
 					absolute_pos.y -= jumpY;
 				break;
 			}
-			case Helper::DOWN_ARROW:
+			case buttons::DOWN_ARROW:
 			{
 				if (absolute_pos.y != limit_2.y)
 					absolute_pos.y += jumpY;
 				break;
 			}
-			case Helper::LEFT_ARROW:
+			case buttons::LEFT_ARROW:
 			{
 				if (absolute_pos.x != limit_1.x)
 					absolute_pos.x -= jumpX;
 				break;
 			}
-			case Helper::RIGHT_ARROW:
+			case buttons::RIGHT_ARROW:
 			{
 				if (absolute_pos.x != limit_2.x)
 					absolute_pos.x += jumpX;

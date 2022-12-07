@@ -59,11 +59,11 @@ public:
 
 	char* handle_input(int input)
 	{
-		if (input == Helper::ENTER)
+		if (input == buttons::ENTER)
 		{
 			return buffer;
 		}
-		else if (input == Helper::BACKSPACE)
+		else if (input == buttons::BACKSPACE)
 		{
 			if (index > 0)
 			{
@@ -181,13 +181,13 @@ public:
 				input = getch();
 				switch (input)
 				{
-					case Helper::LEFT_ARROW:
+					case buttons::LEFT_ARROW:
 					{
 						if (position > 0)
 							position--;
 						break;
 					}
-					case Helper::RIGHT_ARROW:
+					case buttons::RIGHT_ARROW:
 					{
 						if (position < number_of_elements - 1)
 							position++;
@@ -197,7 +197,7 @@ public:
 				update_cursor();
 				break;
 			}
-			case Helper::ENTER:
+			case buttons::ENTER:
 			{
 				if (elements[position].type == SELECTION)
 				{

@@ -1,10 +1,8 @@
 #pragma once
 #include "Point.h"
-class Helper
+
+enum buttons
 {
-public:
-	enum buttons
-	{
 	UP_ARROW = 0x48,
 	LEFT_ARROW = 0x4B,
 	DOWN_ARROW = 0x50,
@@ -18,8 +16,11 @@ public:
 	s = 0x73,
 	l = 0x6C,
 	f = 0x66
-	};
+};
 
+class Helper
+{
+public:
 	static void display_border(Point start_pos, Point end_pos, int border_color)
 	{
 		Point corners[4] =
