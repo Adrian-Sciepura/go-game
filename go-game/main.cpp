@@ -1,9 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <cstdio>
 #include <stdlib.h>
 #include "conio2.h"
-#include "FileService.h"
 #include "Legend.h"
 #include "Board.h"
 #include "Point.h"
@@ -13,11 +10,75 @@
 
 #define DISTANCE 10
 
+char* file_selector(Cursor& cursor)
+{
+	Input_Menu file_selector{ cursor, "Enter file name", YELLOW };
+	file_selector.display();
+	char* buffer = NULL;
+	int input;
+
+	while (buffer == NULL)
+	{
+		input = getch();
+		buffer = file_selector.handle_input(input);
+	}
+
+	int i = 0;
+	char* result = new char[16];
+
+	return strcat(buffer, ".bin");
+}
+
+int size_selector()
+{
+	int input;
+	char* result = NULL;
+
+	Cursor cursor;
+
+	Selection_Menu_Element* elements = (Selection_Menu_Element*)malloc(4 * sizeof(Selection_Menu_Element));
+	elements[0] = { SELECTION, "9x9", "9" };
+	elements[1] = { SELECTION, "13x13", "13" };
+	elements[2] = { SELECTION, "19x19", "19" };
+	elements[3] = { INPUT, "Other" };
+
+	Selection_Menu board_size_selector
+	{
+		elements, 4, 3,
+		cursor,
+		"Choose board size",
+		YELLOW
+	};
+
+	board_size_selector.display();
+
+	while (result == NULL)
+	{
+		input = getch();
+		result = board_size_selector.handle_input(input);
+	}
+
+	free(elements);
+	return Helper::convert_string_to_int(result);
+}
+
+void show_message(Cursor& cursor, const char* message)
+{
+	Selection_Menu_Element* elements = (Selection_Menu_Element*)malloc(sizeof(Selection_Menu_Element));
+	elements[0] = { SELECTION, "OK", 0 };
+
+	Selection_Menu sm
+	{
+		elements, 1, 0, cursor, message, RED
+	};
+	sm.display();
+	getch();
+	free(elements);
+}
 
 void display(Board* board, Cursor& cursor, char board_location)
 {
 	Point menu_display_pos;
-	Point board_display_pos;
 	switch (board_location)
 	{
 		case 'r':
@@ -55,39 +116,6 @@ void new_game(Board*& board, int board_size)
 	board = new Board(board_size);
 }
 
-int select_size()
-{
-	int input;
-	char* result = NULL;
-
-	Cursor cursor;
-
-	Selection_Menu_Element* elements = (Selection_Menu_Element*)malloc(4 * sizeof(Selection_Menu_Element));
-	elements[0] = { SELECTION, "9x9", "9" };
-	elements[1] = { SELECTION, "13x13", "13" };
-	elements[2] = { SELECTION, "19x19", "19" };
-	elements[3] = {	INPUT, "Other"};
-
-	Selection_Menu board_size_selector
-	{
-		elements, 4, 3,
-		cursor,
-		"Choose board size",
-		YELLOW
-	};
-
-	board_size_selector.display(5);
-
-	while (result == NULL)
-	{
-		input = getch();
-		result = board_size_selector.handle_input(input);
-	}
-
-	free(elements);
-	return Helper::convert_string_to_int(result);
-}
-
 void init(Board*& board, int& board_size)
 {
 #ifndef __cplusplus
@@ -95,9 +123,15 @@ void init(Board*& board, int& board_size)
 #endif
 	settitle("Adrian Sciepura 193350");
 	_setcursortype(_NOCURSOR);
-	board_size = select_size();
+	board_size = size_selector();
 	new_game(board, board_size);
-	clrscr();
+}
+
+void refresh_all(Board*& board, Cursor& cursor, char board_location)
+{
+	display(board, cursor, board_location);
+	Helper::display_border(cursor.limit_1 - 1, { cursor.limit_2.x + 2, cursor.limit_2.y + 2 }, YELLOW);
+	cursor.absolute_pos = cursor.limit_1;
 }
 
 int main()
@@ -112,10 +146,7 @@ int main()
 	bool lock = false;
 
 	init(board, board_size);
-	
-	display(board, cursor, board_location);
-	Helper::display_border(cursor.limit_1 - 1, {cursor.limit_2.x + 2, cursor.limit_2.y + 2}, YELLOW);
-	cursor.absolute_pos = cursor.limit_1;
+	refresh_all(board, cursor, board_location);
 
 	while (input != buttons::q)
 	{
@@ -162,17 +193,29 @@ int main()
 			}
 			case buttons::s:
 			{
-				board->save("gameState.bin");
+				char* file_name = file_selector(cursor);
+				if (board->save(file_name) == false)
+				{
+					show_message(cursor, "An error has occurred while saving the file");
+				}
+				refresh_all(board, cursor, board_location);
 				break;
 			}
 			case buttons::l:
 			{
-				board->load("gameState.bin");
+				char* file_name = file_selector(cursor);
+				if(board->load(file_name) == false)
+				{
+					show_message(cursor, "An error has occurred while reading the file");
+				}
+				refresh_all(board, cursor, board_location);
 				break;
 			}
 			case buttons::n:
 			{
+				board_size = board->get_board_size();
 				new_game(board, board_size);
+				refresh_all(board, cursor, board_location);
 				break;
 			}
 		}

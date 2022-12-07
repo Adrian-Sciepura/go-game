@@ -12,6 +12,7 @@ protected:
 	char* header;
 	int number_of_rows;
 	int border_color;
+	int length;
 
 	Menu(Cursor& cursor, const char* header, int number_of_rows, int border_color = YELLOW)
 	{
@@ -22,7 +23,7 @@ protected:
 		this->border_color = border_color;
 	}
 
-	void display(int length)
+	void display()
 	{
 		text_info* ti = new text_info;
 		gettextinfo(ti);
@@ -38,6 +39,8 @@ protected:
 	}
 };
 
+
+
 class Input_Menu : Menu
 {
 private:
@@ -49,12 +52,22 @@ public:
 	{
 		this->buffer = new char[11];
 		this->index = 0;
+		length = 25;
+
+		int header_len = strlen(header);
+		if (header_len > length)
+			length = header_len + 4;
+	}
+
+	~Input_Menu()
+	{
+		clrscr();
 	}
 
 	void display()
 	{
 		clrscr();
-		Menu::display(25);
+		Menu::display();
 	}
 
 	char* handle_input(int input)
@@ -88,6 +101,8 @@ public:
 	}
 };
 
+
+
 enum element_type { SELECTION, INPUT };
 
 struct Selection_Menu_Element
@@ -106,6 +121,8 @@ struct Selection_Menu_Element
 	}
 };
 
+
+
 class Selection_Menu : Menu
 {
 private:
@@ -113,6 +130,7 @@ private:
 	int number_of_elements;
 	int spacing;
 	int position;
+	int elements_length;
 
 public:
 	Selection_Menu(Selection_Menu_Element* elements, int number_of_elements, int spacing, Cursor& cursor, const char* header, int border_color)
@@ -122,6 +140,26 @@ public:
 		this->number_of_elements = number_of_elements;
 		this->spacing = spacing;
 		this->position = 0;
+
+		elements_length = (number_of_elements - 1) * spacing;
+		for (int i = 0; i < number_of_elements; i++)
+		{
+			elements_length += elements[i].length;
+		}
+
+		if (strlen(header) > elements_length)
+		{
+			length = strlen(header) + 4;
+		}
+		else
+		{
+			length = elements_length + 2 * spacing;
+		}
+	}
+
+	~Selection_Menu()
+	{
+		clrscr();
 	}
 
 	void update_cursor()
@@ -145,30 +183,13 @@ public:
 		cursor.display();
 	}
 
-	void display(int line = 5)
+	void display()
 	{
-		int final_length;
-		int full_elements_length = (number_of_elements - 1) * spacing;
-		for (int i = 0; i < number_of_elements; i++)
-		{
-			full_elements_length += elements[i].length;
-		}
-
-		if (strlen(header) > full_elements_length)
-		{
-			final_length = strlen(header) + 2 * spacing;
-		}
-		else
-		{
-			final_length = full_elements_length + 2 * spacing;
-		}
-
-		Menu::display(final_length);
-
-		cursor.limit_1.x = start_pos.x + (final_length - full_elements_length) / 2 + 1;
-		cursor.limit_1.y = start_pos.y + line;
-		cursor.limit_2.x = start_pos.x + full_elements_length + 1;
-
+		clrscr();
+		Menu::display();
+		cursor.limit_1.x = start_pos.x + (length - elements_length) / 2 + 1;
+		cursor.limit_1.y = start_pos.y + 5;
+		cursor.limit_2.x = start_pos.x + elements_length + 1;
 		update_cursor();
 	}
 
