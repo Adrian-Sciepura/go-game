@@ -1,6 +1,6 @@
 #include <cstdio>
 #include "conio2.h"
-#include "FileService.h"
+#include "Helper.h"
 #include "Point.h"
 #ifndef Legend_H
 #define Legend_H
@@ -19,7 +19,7 @@ private:
 			return;
 		}
 
-		menu_text = FileService::read_file("menuContent.txt");
+		menu_text = Helper::read_text_file("menuContent.txt");
 		
 		int i = 0;
 		int longest = 0;
