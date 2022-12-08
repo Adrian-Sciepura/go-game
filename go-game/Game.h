@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Menu.h"
 #include <corecrt_malloc.h>
+#include <stdio.h>
 class Game
 {
 private:
@@ -16,19 +17,21 @@ private:
 	char board_location;
 	int board_size;
 	bool lock;
+	bool handicap;
 
 public:
 	Game(int board_size, char board_location)
 	{
 		this->lock = false;
+		this->handicap = false;
 		this->board_size = board_size;
 		this->board_location = board_location;
 
 		this->board = new Board(board_size);
 		this->cursor = new Cursor(); 
 		this->legend = new Legend();
-		this->player1 = new Player(Board::PLAYER_1);
-		this->player2 = new Player(Board::PLAYER_2);
+		this->player1 = new Player(field_type::PLAYER_1);
+		this->player2 = new Player(field_type::PLAYER_2);
 		setup_points();
 	}
 
@@ -71,7 +74,7 @@ public:
 	void update()
 	{
 		board->display_area(cursor->limit_1);
-		legend->update(*cursor, board->tour);
+		legend->update(*cursor, board->tour, player1->score, player2->score);
 		cursor->display();
 	}
 
@@ -85,7 +88,7 @@ public:
 			return false;
 		}
 
-		_int8 size = this->board->get_board_size();
+		__int8 size = this->board->get_board_size();
 		bool tour = this->board->tour;
 
 		fwrite(&size, sizeof(size), 1, file);
@@ -113,7 +116,7 @@ public:
 			return false;
 		}
 
-		_int8 size;
+		__int8 size;
 		bool tour;
 
 		fread(&size, sizeof(size), 1, file);
@@ -168,16 +171,26 @@ public:
 				if (lock)
 				{
 					bool success;
-					if (board->tour)
-						success = player2->set_stone(board, cursor->relative_pos);
-					else
-						success = player1->set_stone(board, cursor->relative_pos);
-
-					if (success)
+					if (handicap)
 					{
-						board->tour = !board->tour;
-						lock = false;
+						success = player2->set_stone(*board, cursor->relative_pos);
+						if (success)
+							lock = false;
 					}
+					else
+					{
+						if (board->tour)
+							success = player2->set_stone(*board, cursor->relative_pos);
+						else
+							success = player1->set_stone(*board, cursor->relative_pos);
+
+						if (success)
+						{
+							board->tour = !board->tour;
+							lock = false;
+						}
+					}
+
 				}
 				break;
 			}
@@ -186,9 +199,11 @@ public:
 				lock = false;
 				break;
 			}
+			case buttons::h:
+			{
+				handicap = !handicap;
+				break;;
+			}
 		}
 	}
-
-
-
 };
