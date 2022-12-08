@@ -1,4 +1,6 @@
+%
 Adrian Sciepura 193350
+%
 arrows - moving
 q - quit
 n - new game
@@ -8,3 +10,4 @@ i - place stone on a board
 s - save game
 l - load game
 f - end game
+%
