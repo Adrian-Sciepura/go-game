@@ -6,7 +6,7 @@ struct Point
 	int x;
 	int y;
 
-	Point(int x = 0, int y = 0)
+	Point(int x = -1, int y = -1)
 	{
 		this->x = x;
 		this->y = y;
@@ -25,6 +25,11 @@ struct Point
 	Point operator + (int val)
 	{
 		return { this->x + val, this->y + val };
+	}
+
+	bool operator == (Point p)
+	{
+		return this->x == p.x && this->y == p.y;
 	}
 };
 #endif
