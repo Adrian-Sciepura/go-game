@@ -6,7 +6,7 @@ class Player
 private:
 	char id;
 public:
-	int score;
+	double score;
 
 	Player(char id)
 	{

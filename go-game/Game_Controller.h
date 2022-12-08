@@ -44,7 +44,7 @@ private:
 
 	bool is_suicide(Player*& player, Point p)
 	{
-		if (has_even_one_empty_neighbour(p, player->get_id()))
+		if (has_even_one_breathe(p, player->get_id()))
 		{
 			clear_checked_list();
 			return false;
@@ -64,19 +64,19 @@ private:
 
 		for (int i = 0; i < 4; i++)
 		{
+			clear_checked_list();
 			char opponent_id = 99 - player->get_id();
-			if (has_even_one_empty_neighbour(possibilities[i], opponent_id) == false)
+			if (has_even_one_breathe(possibilities[i], opponent_id) == false)
 			{
 				remove_points();
 				beated = this->how_many_checked;
-				clear_checked_list();
 			}
 		}
-
+		clear_checked_list();
 		return beated;;
 	}
 
-	bool has_even_one_empty_neighbour(Point p, char search)
+	bool has_even_one_breathe(Point p, char search)
 	{
 		Point possibilities[4] =
 		{
@@ -99,7 +99,7 @@ private:
 			{
 				if (is_already_checked(possibilities[i]) == false)
 				{
-					if (has_even_one_empty_neighbour(possibilities[i], search))
+					if (has_even_one_breathe(possibilities[i], search))
 						return true;
 				}
 			}
@@ -137,7 +137,6 @@ public:
 		this->handicap = false;
 		this->board_size = board_size;
 		this->board_location = board_location;
-
 		this->board = new Board(board_size);
 		this->cursor = new Cursor(); 
 		this->legend = new Legend();
@@ -208,6 +207,8 @@ public:
 
 		fwrite(&size, sizeof(size), 1, file);
 		fwrite(&tour, sizeof(tour), 1, file);
+		fwrite(&this->player1->score, sizeof(double), 1, file);
+		fwrite(&this->player2->score, sizeof(double), 1, file);
 
 		for (int y = 0; y < size; y++)
 		{
@@ -236,6 +237,8 @@ public:
 
 		fread(&size, sizeof(size), 1, file);
 		fread(&tour, sizeof(tour), 1, file);
+		fread(&this->player1->score, sizeof(double), 1, file);
+		fread(&this->player2->score, sizeof(double), 1, file);
 
 		delete this->board;
 		this->board = new Board(size, tour);
