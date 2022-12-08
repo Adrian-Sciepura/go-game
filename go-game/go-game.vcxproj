@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Board.h" />
     <ClInclude Include="conio2.h" />
+    <ClInclude Include="Game_Controller.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="Legend.h" />

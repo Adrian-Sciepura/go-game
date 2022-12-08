@@ -2,7 +2,9 @@
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdio.h(41,1): warning C4005: "EOF": ponowna definicja makra
 C:\GitHub\go-game\go-game\conio2.h(31): message : zobacz poprzednią definicję „EOF”
 C:\GitHub\go-game\go-game\Menu.h(35,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Menu.h(57,1): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Menu.h(118,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Menu.h(152,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Menu.h(58,1): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Menu.h(119,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Menu.h(153,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Legend.h(125,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Legend.h(127,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
   go-game.vcxproj -> C:\GitHub\go-game\x64\Debug\go-game.exe

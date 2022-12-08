@@ -6,7 +6,7 @@
 #include "Menu.h"
 #include <corecrt_malloc.h>
 #include <stdio.h>
-class Game
+class Game_Controller
 {
 private:
 	Board* board;
@@ -131,7 +131,7 @@ private:
 	}
 
 public:
-	Game(int board_size, char board_location)
+	Game_Controller(int board_size, char board_location)
 	{
 		this->lock = false;
 		this->handicap = false;
@@ -148,7 +148,7 @@ public:
 		setup_points();
 	}
 
-	~Game()
+	~Game_Controller()
 	{
 		delete board;
 		delete cursor;

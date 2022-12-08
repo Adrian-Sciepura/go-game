@@ -3,7 +3,7 @@
 #include "conio2.h"
 #include "Menu.h"
 #include "Cursor.h"
-#include "Game.h"
+#include "Game_controller.h"
 
 int size_selector()
 {
@@ -76,7 +76,7 @@ void show_message(const char* message)
 
 int main()
 {
-	Game game(size_selector(), 'r');
+	Game_Controller game(size_selector(), 'r');
 	int input = 0;
 	game.display();
 	settitle("Adrian Sciepura 193350");
