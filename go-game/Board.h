@@ -6,13 +6,9 @@ class Board
 {
 private:
 	__int8 size;
-	unsigned char interior;
-	unsigned char border;
 	char** area;
-
 public:
 	bool tour;
-
 	enum values
 	{
 		INTERIOR = '0',
@@ -21,12 +17,10 @@ public:
 		OUT_OF_RANGE = '#'
 	};
 
-	Board(int size, bool tour = 0, unsigned char interior = '+', unsigned char border = '#')
+	Board(int size, bool tour = 0)
 	{
 		this->size = size;
 		this->tour = tour;
-		this->interior = interior;
-		this->border = border;
 		this->area = new char*[size];
 
 		for (int x = 0; x < size; x++)
@@ -39,82 +33,29 @@ public:
 		}
 	}
 
-	bool load(const char* file_name)
-	{
-		FILE* file;
-		file = fopen(file_name, "rb");
-
-		if (file == NULL)
-		{
-			return false;
-		}
-
-		fread(&this->size, sizeof(size), 1, file);
-		fread(&this->tour, sizeof(tour), 1, file);
-		fread(&this->interior, sizeof(interior), 1, file);
-		fread(&this->border, sizeof(border), 1, file);
-
-		delete[] this->area;
-
-		this->area = new char* [size];
-
-		for (int x = 0; x < size; x++)
-		{
-			area[x] = new char[size];
-			for (int y = 0; y < size; y++)
-			{
-				fread(&this->area[x][y], sizeof(char), 1, file);
-			}
-		}
-
-		fclose(file);
-		return true;
-	}
-
-	bool save(const char* file_name)
-	{
-		FILE* file;
-		file = fopen(file_name, "wb");
-
-		if (file == NULL)
-		{
-			return false;
-		}
-
-		fwrite(&this->size, sizeof(size), 1, file);
-		fwrite(&this->tour, sizeof(tour), 1, file);
-		fwrite(&this->interior, sizeof(interior), 1, file);
-		fwrite(&this->border, sizeof(border), 1, file);
-
-		for (int x = 0; x < size; x++)
-		{
-			for (int y = 0; y < size; y++)
-			{
-				fwrite(&this->area[x][y], sizeof(char), 1, file);
-			}
-		}
-		fclose(file);
-		return true;
-	}
-
 	~Board()
 	{
+		for (int y = 0; y < size; y++)
+		{
+			delete area[y];
+		}
 		delete [] area;
 	}
 
 	void display_area(Point p) const
 	{
 		gotoxy(p.x, p.y);
-		for (int i = 0; i < size; i++)
+		for (int x = 0; x < size; x++)
 		{
-			for (int j = 0; j < size; j++)
+			for (int y = 0; y < size; y++)
 			{
-				char temp = area[i][j];
+				char temp = area[x][y];
 
 				switch (temp)
 				{
 					case INTERIOR:
 					{
+						textcolor(WHITE);
 						putch(197);
 						break;
 					}
@@ -134,9 +75,10 @@ public:
 					}
 				}
 
-				if (j != size - 1)
+				if (y != size - 1)
 					putch(196);
 			}
+			
 			gotoxy(p.x, ++p.y);
 		}
 	}
