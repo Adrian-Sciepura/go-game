@@ -36,6 +36,7 @@ protected:
 		textcolor(CYAN);
 		cputs(header);
 		textcolor(WHITE);
+		delete ti;
 	}
 };
 

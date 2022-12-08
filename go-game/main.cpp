@@ -5,8 +5,6 @@
 #include "Cursor.h"
 #include "Game.h"
 
-#define DISTANCE 10
-
 int size_selector()
 {
 	Cursor cursor;

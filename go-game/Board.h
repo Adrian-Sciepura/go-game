@@ -1,7 +1,17 @@
 #pragma once
 #include "Point.h"
 #include <cstdio>
+#include <stdio.h>
 #include "conio2.h"
+
+enum field_type
+{
+	INTERIOR = '0',
+	PLAYER_1 = '1',
+	PLAYER_2 = '2',
+	OUT_OF_RANGE = '#'
+};
+
 class Board
 {
 private:
@@ -9,13 +19,6 @@ private:
 	char** area;
 public:
 	bool tour;
-	enum values
-	{
-		INTERIOR = '0',
-		PLAYER_1 = '1',
-		PLAYER_2 = '2',
-		OUT_OF_RANGE = '#'
-	};
 
 	Board(int size, bool tour = 0)
 	{
@@ -61,14 +64,14 @@ public:
 					}
 					case PLAYER_1:
 					{
-						textcolor(WHITE);
+						textcolor(DARKGRAY);
 						putch(254);
 						textcolor(WHITE);
 						break;
 					}
 					case PLAYER_2:
 					{
-						textcolor(DARKGRAY);
+						textcolor(WHITE);
 						putch(254);
 						textcolor(WHITE);
 						break;

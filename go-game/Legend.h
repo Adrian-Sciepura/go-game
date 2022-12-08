@@ -12,7 +12,7 @@ class Legend
 private:
 	Point display_pos;
 	char* menu_text;
-	int lines_length[20];
+	int* lines_length;
 	int number_of_lines;
 	unsigned char* separator;
 	int longest_line;
@@ -23,7 +23,7 @@ public:
 	{
 		this->display_pos = {0,0};
 		this->number_of_lines = 0;
-
+		this->lines_length = new int[20];
 		menu_text = Helper::read_text_file("menuContent.txt");
 		int i = 0;
 		int current = 0;
@@ -57,7 +57,7 @@ public:
 	{
 		delete menu_text;
 		delete separator;
-		free(lines_length);
+		delete lines_length;
 	}
 
 	void set_display_pos(Point start_pos)
@@ -102,11 +102,11 @@ public:
 		last_y = start_pos.y;
 	}
 
-	void update(Cursor& cursor, int tour)
+	void update(Cursor& cursor, int tour, int p1_score, int p2_score)
 	{
 		textcolor(LIGHTBLUE);
 		char current_coords_text[30];
-		sprintf(current_coords_text, "x: %d y: %d \0", cursor.relative_pos.x, cursor.relative_pos.y);
+		sprintf(current_coords_text, " x: %d y: %d \0", cursor.relative_pos.x, cursor.relative_pos.y);
 		display_element("Position", current_coords_text, 0);
 
 		textcolor(LIGHTBLUE);
@@ -116,7 +116,7 @@ public:
 
 		textcolor(LIGHTBLUE);
 		char current_score[30];
-		sprintf(current_score, "Player 1: %d Player 2: %d", 0, 0);
+		sprintf(current_score, "Player 1: %d Player 2: %d", p1_score, p2_score);
 		display_element("Score", current_score, 6);
 	}
 
