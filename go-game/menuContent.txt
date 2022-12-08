@@ -3,6 +3,7 @@ Adrian Sciepura 193350
 %
 arrows - moving
 q - quit
+h - handicap
 n - new game
 enter - confirm current action
 esc - cancel current action
