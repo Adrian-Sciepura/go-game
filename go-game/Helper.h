@@ -1,5 +1,6 @@
 #pragma once
 #include "Point.h"
+#include <cstdio>
 
 enum buttons
 {
@@ -15,7 +16,8 @@ enum buttons
 	i = 0x69,
 	s = 0x73,
 	l = 0x6C,
-	f = 0x66
+	f = 0x66,
+	h = 0x68
 };
 
 class Helper
