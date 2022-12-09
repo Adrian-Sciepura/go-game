@@ -7,6 +7,6 @@ C:\GitHub\go-game\go-game\Menu.h(119,1): warning C4267: "=": konwersja z "size_t
 C:\GitHub\go-game\go-game\Menu.h(153,1): warning C4267: "=": konwersja z "size_t" do "int", możliwa utrata danych
 C:\GitHub\go-game\go-game\Legend.h(125,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
 C:\GitHub\go-game\go-game\Legend.h(127,1): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Game_controller.h(191,63): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
-C:\GitHub\go-game\go-game\Game_controller.h(191,47): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Game_controller.h(195,63): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
+C:\GitHub\go-game\go-game\Game_controller.h(195,47): warning C4244: "argument": konwersja z "double" do "int", możliwa utrata danych
   go-game.vcxproj -> C:\GitHub\go-game\x64\Debug\go-game.exe

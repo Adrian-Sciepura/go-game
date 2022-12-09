@@ -78,6 +78,7 @@ int main()
 {
 	Game_Controller game(size_selector(), 'r');
 	int input = 0;
+	game.setup_points();
 	game.display();
 	settitle("Adrian Sciepura 193350");
 	_setcursortype(_NOCURSOR);
@@ -95,6 +96,7 @@ int main()
 				{
 					show_message("An error has occurred while saving the file");
 				}
+				game.setup_points();
 				game.display();
 				break;
 			}
@@ -105,6 +107,7 @@ int main()
 				{
 					show_message("An error has occurred while reading the file");
 				}
+				game.setup_points();
 				game.display();
 				break;
 			}
