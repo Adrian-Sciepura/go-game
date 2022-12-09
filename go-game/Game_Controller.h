@@ -139,6 +139,7 @@ public:
 		this->board_location = board_location;
 		this->board = new Board(board_size);
 		this->cursor = new Cursor(); 
+		cursor->board_size = board_size;
 		this->legend = new Legend();
 		this->player1 = new Player(field_type::PLAYER_1);
 		this->player2 = new Player(field_type::PLAYER_2);
@@ -174,15 +175,17 @@ public:
 				break;
 			}
 		}
+		int display_size = board->get_board_size() > PAGE_LENGTH ? PAGE_LENGTH : board->get_board_size();
 		cursor->absolute_pos = cursor->limit_1;
-		cursor->limit_2 = { cursor->limit_1.x + board->get_board_size() * 2 - 2, cursor->limit_1.y + board->get_board_size() - 1 };
+		cursor->relative_pos = { 0, 0 };
+		cursor->limit_2 = { cursor->limit_1.x + ((board->end.x - 1) % board->display_size) * 2, cursor->limit_1.y + ((board->end.y - 1) % board->display_size) };
 	}
 
 	void display()
 	{
-		setup_points();
+		int display_size = board->get_board_size() > PAGE_LENGTH ? PAGE_LENGTH : board->get_board_size();
 		legend->display();
-		Helper::display_border(cursor->limit_1 - 1, { cursor->limit_2.x + 2, cursor->limit_2.y + 2 }, YELLOW);
+		Helper::display_border(cursor->limit_1 - 1, { cursor->limit_1.x + display_size * 2, cursor->limit_1.y + display_size + 1 }, YELLOW);
 	}
 
 	void update()
@@ -243,6 +246,7 @@ public:
 		delete this->board;
 		this->board = new Board(size, tour);
 		this->board_size = size;
+		cursor->board_size = size;
 
 		for (int y = 0; y < size; y++)
 		{
@@ -267,6 +271,8 @@ public:
 		board_size = board->get_board_size();
 		delete this->board;
 		this->board = new Board(board_size);
+		this->player1->score = 0;
+		this->player2->score = 0;
 		setup_points();
 		display();
 	}
@@ -280,7 +286,14 @@ public:
 				if (lock == false)
 				{
 					input = getch();
-					cursor->move(input);
+					cursor->move(board, input);
+				}
+
+				if (cursor->refresh)
+				{
+					clrscr();
+					display();
+					cursor->refresh = false;
 				}
 				break;
 			}
