@@ -1,6 +1,7 @@
 #pragma once
 #include "Point.h"
 #include <cstdio>
+#define PAGE_LENGTH 25
 
 enum buttons
 {
