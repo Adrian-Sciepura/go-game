@@ -18,14 +18,19 @@ private:
 	__int8 size;
 	char** area;
 public:
+	int display_size;
 	bool tour;
+	Point start;
+	Point end;
 
 	Board(int size, bool tour = 0)
 	{
 		this->size = size;
 		this->tour = tour;
 		this->area = new char*[size];
-
+		this->display_size = size > PAGE_LENGTH ? PAGE_LENGTH : size;
+		this->start = { 0 ,0 };
+		this->end = { display_size, display_size };
 		for (int x = 0; x < size; x++)
 		{
 			area[x] = new char[size];
@@ -45,15 +50,15 @@ public:
 		delete [] area;
 	}
 
-	void display_area(Point p) const
+	void display_area(Point display_pos)
 	{
-		gotoxy(p.x, p.y);
-		for (int x = 0; x < size; x++)
-		{
-			for (int y = 0; y < size; y++)
-			{
-				char temp = area[x][y];
+		gotoxy(display_pos.x, display_pos.y);
 
+		for (int y = start.y; y < end.y; y++)
+		{
+			for (int x = start.x; x < end.x; x++)
+			{
+				char temp = area[y][x];
 				switch (temp)
 				{
 					case INTERIOR:
@@ -78,12 +83,12 @@ public:
 					}
 				}
 
-				if (y != size - 1)
+				if (x != end.x - 1)
 					putch(196);
-			}
-			
-			gotoxy(p.x, ++p.y);
+				}
+			gotoxy(display_pos.x, ++display_pos.y);
 		}
+
 	}
 
 	int get_board_size() const
