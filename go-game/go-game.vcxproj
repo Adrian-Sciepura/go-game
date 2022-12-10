@@ -22,16 +22,30 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="conio2.h" />
     <ClInclude Include="Game_Controller.h" />
+    <ClInclude Include="Input_Menu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="Legend.h" />
     <ClInclude Include="Helper.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Selection_Menu.h" />
+    <ClInclude Include="Selection_Menu_Element.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="conio2.cpp" />
+    <ClCompile Include="Cursor.cpp" />
+    <ClCompile Include="Game_Controller.cpp" />
+    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="Input_Menu.cpp" />
+    <ClCompile Include="Legend.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Selection_Menu.cpp" />
+    <ClCompile Include="Selection_Menu_Element.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="menuContent.txt" />

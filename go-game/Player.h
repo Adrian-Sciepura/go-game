@@ -1,14 +1,11 @@
-#pragma once
-#include "Point.h"
-#include "Board.h"
+#ifndef PLAYER_H
+#define PLAYER_H
+
 struct Player
 {
 	char id;
 	double score;
 
-	Player(char id)
-	{
-		this->id = id;
-		this->score = 0;
-	}
+	Player(char id);
 };
+#endif

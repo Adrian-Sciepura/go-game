@@ -4,6 +4,8 @@
 #include "Menu.h"
 #include "Cursor.h"
 #include "Game_Controller.h"
+#include "Input_Menu.h"
+#include "Selection_Menu.h"
 
 int size_selector()
 {
