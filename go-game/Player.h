@@ -1,11 +1,9 @@
 #pragma once
 #include "Point.h"
 #include "Board.h"
-class Player
+struct Player
 {
-private:
 	char id;
-public:
 	double score;
 
 	Player(char id)
@@ -13,11 +11,4 @@ public:
 		this->id = id;
 		this->score = 0;
 	}
-
-	char get_id()
-	{
-		return this->id;
-	}
 };
-
-

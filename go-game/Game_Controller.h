@@ -4,7 +4,6 @@
 #include "Legend.h"
 #include "Player.h"
 #include "Menu.h"
-#include <corecrt_malloc.h>
 #include <stdio.h>
 class Game_Controller
 {
@@ -29,14 +28,15 @@ private:
 
 		if (value_of_position == field_type::INTERIOR)
 		{
-			board->set_value_by_pos(p, player->get_id());
+			board->set_value_by_pos(p, player->id);
+			player->score += can_beat(player, p);
+
 			if (is_suicide(player, p))
 			{
 				board->set_value_by_pos(p, field_type::INTERIOR);
 				return false;
 			}
-
-			player->score += can_beat(player, p);
+			
 			return true;
 		}
 		return false;
@@ -44,7 +44,7 @@ private:
 
 	bool is_suicide(Player*& player, Point p)
 	{
-		if (has_even_one_breathe(p, player->get_id()))
+		if (has_even_one_breathe(p, player->id))
 		{
 			clear_checked_list();
 			return false;
@@ -65,7 +65,7 @@ private:
 		for (int i = 0; i < 4; i++)
 		{
 			clear_checked_list();
-			char opponent_id = 99 - player->get_id();
+			char opponent_id = 99 - player->id;
 			if (has_even_one_breathe(possibilities[i], opponent_id) == false)
 			{
 				remove_points();
@@ -164,21 +164,21 @@ public:
 		{
 			case 'r':
 			{
-				this->legend->set_display_pos({2, 1});
-				cursor->limit_1 = { legend->get_longest_line_length() + 10 + 1, 3 };
+				this->legend->set_display_pos({1, 1});
+				cursor->limit_1 = { legend->get_longest_line_length() + 5 + DISTANCE, 3 };
 				break;
 			}
 			case 'l':
 			{
-				this->legend->set_display_pos({ board->get_board_size() + 10 + 2, 2 });
-				cursor->limit_1 = { 2, 2 };
+				this->legend->set_display_pos({ board->display_size*2 + 2 + DISTANCE, 1 });
+				cursor->limit_1 = { 3, 3 };
 				break;
 			}
 		}
-		int display_size = board->get_board_size() > PAGE_LENGTH ? PAGE_LENGTH : board->get_board_size();
+
 		cursor->absolute_pos = cursor->limit_1;
 		cursor->relative_pos = { 0, 0 };
-		cursor->limit_2 = { cursor->limit_1.x + ((board->end.x - 1) % board->display_size) * 2, cursor->limit_1.y + ((board->end.y - 1) % board->display_size) };
+		cursor->limit_2 = { cursor->limit_1.x + ((board->page_end.x - 1) % board->display_size) * 2, cursor->limit_1.y + ((board->page_end.y - 1) % board->display_size) };
 	}
 
 	void display()

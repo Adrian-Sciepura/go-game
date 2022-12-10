@@ -3,7 +3,7 @@
 #include "conio2.h"
 #include "Menu.h"
 #include "Cursor.h"
-#include "Game_controller.h"
+#include "Game_Controller.h"
 
 int size_selector()
 {
@@ -13,7 +13,10 @@ int size_selector()
 	char* result = NULL;
 
 	Selection_Menu_Element* elements = new Selection_Menu_Element[4]{ 
-		{ SELECTION, "9x9", "9" }, { SELECTION, "13x13", "13" }, { SELECTION, "19x19", "19" }, { INPUT, "Other" }
+		{ SELECTION, "9x9", "9" },
+		{ SELECTION, "13x13", "13" },
+		{ SELECTION, "19x19", "19" },
+		{ INPUT, "Other" }
 	};
 
 	Selection_Menu board_size_selector
@@ -32,7 +35,6 @@ int size_selector()
 		result = board_size_selector.handle_input(input);
 	}
 
-	delete[] elements;
 	return Helper::convert_string_to_int(result);
 }
 
@@ -71,12 +73,11 @@ void show_message(const char* message)
 	};
 	sm.display();
 	getch();
-	delete[] elements;
 }
 
 int main()
 {
-	Game_Controller game(size_selector(), 'r');
+	Game_Controller game(size_selector(), BOARD_LOCATION);
 	int input = 0;
 	game.setup_points();
 	game.display();
@@ -96,7 +97,6 @@ int main()
 				{
 					show_message("An error has occurred while saving the file");
 				}
-				game.setup_points();
 				game.display();
 				break;
 			}
@@ -123,6 +123,5 @@ int main()
 			}
 		}
 	}
-
-	getch();
+	show_message("Thanks for playing");
 }

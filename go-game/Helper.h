@@ -1,8 +1,14 @@
 #pragma once
 #include "Point.h"
 #include <cstdio>
-#define PAGE_LENGTH 25
+//maximum size of visible board
+#define PAGE_LENGTH 26
+//distance between legend and board
+#define DISTANCE 10
+//location of the board on the screen relative to the legend
+#define BOARD_LOCATION 'r'
 
+//ascii codes of used buttons
 enum buttons
 {
 	UP_ARROW = 0x48,
@@ -104,4 +110,3 @@ public:
 		return buffer;
 	}
 };
-

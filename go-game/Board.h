@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "conio2.h"
 
+//types of fields which are on the board
 enum field_type
 {
 	INTERIOR = '0',
@@ -20,8 +21,8 @@ private:
 public:
 	int display_size;
 	bool tour;
-	Point start;
-	Point end;
+	Point page_start;
+	Point page_end;
 
 	Board(int size, bool tour = 0)
 	{
@@ -29,8 +30,8 @@ public:
 		this->tour = tour;
 		this->area = new char*[size];
 		this->display_size = size > PAGE_LENGTH ? PAGE_LENGTH : size;
-		this->start = { 0 ,0 };
-		this->end = { display_size, display_size };
+		this->page_start = { 0 ,0 };
+		this->page_end = { display_size, display_size };
 		for (int x = 0; x < size; x++)
 		{
 			area[x] = new char[size];
@@ -54,9 +55,9 @@ public:
 	{
 		gotoxy(display_pos.x, display_pos.y);
 
-		for (int y = start.y; y < end.y; y++)
+		for (int y = page_start.y; y < page_end.y; y++)
 		{
-			for (int x = start.x; x < end.x; x++)
+			for (int x = page_start.x; x < page_end.x; x++)
 			{
 				char temp = area[y][x];
 				switch (temp)
@@ -83,7 +84,7 @@ public:
 					}
 				}
 
-				if (x != end.x - 1)
+				if (x != page_end.x - 1)
 					putch(196);
 				}
 			gotoxy(display_pos.x, ++display_pos.y);

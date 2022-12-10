@@ -1,3 +1,4 @@
+
 #pragma once
 #include <string.h>
 #include "Point.h"
@@ -103,7 +104,7 @@ public:
 };
 
 
-
+//type of item available in the menu
 enum element_type { SELECTION, INPUT };
 
 struct Selection_Menu_Element
@@ -119,6 +120,12 @@ struct Selection_Menu_Element
 		this->length = strlen(content);
 		this->return_value = _strdup(return_value);
 		this->type = type;
+	}
+
+	~Selection_Menu_Element()
+	{
+		delete[] content;
+		delete[] return_value;
 	}
 };
 
@@ -160,6 +167,7 @@ public:
 
 	~Selection_Menu()
 	{
+		delete[] elements;
 		clrscr();
 	}
 

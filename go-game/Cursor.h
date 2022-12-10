@@ -43,10 +43,10 @@ struct Cursor
 					if (pageY > 0)
 					{
 						pageY--;
-						board->start.y = pageY * board->display_size;
+						board->page_start.y = pageY * board->display_size;
 						int temp = (pageY + 1) * board->display_size;
-						board->end.y = temp >= board_size ? board_size : temp;
-						limit_2 = { limit_1.x + ((board->end.x - 1) % board->display_size) * 2, limit_1.y + ((board->end.y - 1) % board->display_size) };
+						board->page_end.y = temp >= board_size ? board_size : temp;
+						limit_2 = { limit_1.x + ((board->page_end.x - 1) % board->display_size) * 2, limit_1.y + ((board->page_end.y - 1) % board->display_size) };
 						absolute_pos.y = limit_2.y;
 						refresh = true;
 					}
@@ -60,10 +60,10 @@ struct Cursor
 					if (relative_pos.y + 1 < board_size)
 					{
 						pageY++;
-						board->start.y = pageY * board->display_size;
+						board->page_start.y = pageY * board->display_size;
 						int temp = (pageY + 1) * board->display_size;
-						board->end.y = temp >= board_size ? board_size : temp;
-						limit_2 = { limit_1.x + ((board->end.x - 1) % board->display_size) * 2, limit_1.y + ((board->end.y - 1) % board->display_size) };
+						board->page_end.y = temp >= board_size ? board_size : temp;
+						limit_2 = { limit_1.x + ((board->page_end.x - 1) % board->display_size) * 2, limit_1.y + ((board->page_end.y - 1) % board->display_size) };
 						absolute_pos.y = limit_1.y;
 						refresh = true;
 					}
@@ -77,10 +77,10 @@ struct Cursor
 					if (pageX > 0)
 					{
 						pageX--;
-						board->start.x = pageX * board->display_size;
+						board->page_start.x = pageX * board->display_size;
 						int temp = (pageX + 1) * board->display_size;
-						board->end.x = temp >= board_size ? board_size : temp;
-						limit_2 = { limit_1.x + ((board->end.x - 1) % board->display_size) * 2, limit_1.y + ((board->end.y - 1) % board->display_size) };
+						board->page_end.x = temp >= board_size ? board_size : temp;
+						limit_2 = { limit_1.x + ((board->page_end.x - 1) % board->display_size) * 2, limit_1.y + ((board->page_end.y - 1) % board->display_size) };
 						absolute_pos.x = limit_2.x;
 						refresh = true;
 					}
@@ -94,10 +94,10 @@ struct Cursor
 					if (relative_pos.x + 1 < board_size)
 					{
 						pageX++;
-						board->start.x = pageX * board->display_size;
+						board->page_start.x = pageX * board->display_size;
 						int temp = (pageX + 1) * board->display_size;
-						board->end.x = temp >= board_size ? board_size : temp;
-						limit_2 = { limit_1.x + ((board->end.x - 1) % board->display_size) * 2, limit_1.y + ((board->end.y - 1) % board->display_size) };
+						board->page_end.x = temp >= board_size ? board_size : temp;
+						limit_2 = { limit_1.x + ((board->page_end.x - 1) % board->display_size) * 2, limit_1.y + ((board->page_end.y - 1) % board->display_size) };
 						absolute_pos.x = limit_1.x;
 						refresh = true;
 					}

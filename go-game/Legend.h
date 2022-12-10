@@ -21,6 +21,7 @@ private:
 public:
 	Legend()
 	{
+		this->last_y = 0;
 		this->display_pos = {0,0};
 		this->number_of_lines = 0;
 		this->lines_length = new int[20];
@@ -79,7 +80,7 @@ public:
 		Point start_pos = display_pos;
 		int i = 0;
 		int line = 0;
-		gotoxy(start_pos.x + 1 + (longest_line - lines_length[line])/2, start_pos.y);
+		gotoxy(start_pos.x + 2 + (longest_line - lines_length[line])/2, start_pos.y);
 		while (menu_text[i] != '\0')
 		{
 			char current_element = menu_text[i];
@@ -87,11 +88,11 @@ public:
 			if (current_element == '\n')
 			{
 				line++;
-				gotoxy(start_pos.x + 1 + (longest_line - lines_length[line])/2, ++start_pos.y);
+				gotoxy(start_pos.x + 2 + (longest_line - lines_length[line])/2, ++start_pos.y);
 			}
 			else if (current_element == '%')
 			{
-				gotoxy(start_pos.x, ++start_pos.y);
+				gotoxy(start_pos.x + 1, ++start_pos.y);
 				display_separator();
 				start_pos.y++;
 			}
@@ -122,11 +123,11 @@ public:
 
 	void display_element(const char* header, const char* text, int y)
 	{
-		gotoxy(display_pos.x + 1 + (longest_line - strlen(header)) / 2, last_y + y);
+		gotoxy(display_pos.x + 2 + (longest_line - strlen(header)) / 2, last_y + y);
 		cputs(header);
-		gotoxy(display_pos.x + 1 + (longest_line - strlen(text)) / 2, last_y + y + 1);
+		gotoxy(display_pos.x + 2 + (longest_line - strlen(text)) / 2, last_y + y + 1);
 		cputs(text);
-		gotoxy(display_pos.x, last_y + y + 2);
+		gotoxy(display_pos.x + 1, last_y + y + 2);
 		display_separator();
 	}
 
@@ -135,5 +136,4 @@ public:
 		return longest_line;
 	}
 };
-
 #endif

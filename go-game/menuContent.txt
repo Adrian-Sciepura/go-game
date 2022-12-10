@@ -1,5 +1,6 @@
 %
 Adrian Sciepura 193350
+a b c d e f h i j k
 %
 arrows - moving
 q - quit
